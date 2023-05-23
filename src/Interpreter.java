@@ -541,6 +541,21 @@ public void semSignal(String resource) throws IOException{
 
 
 
+public void execute( )
+{
+	int i= 10;
+	while(memory[i]!= null)
+	{
+		
+		
+	}
+}
+
+
+public void assign()
+{
+	
+}
 
 
 
