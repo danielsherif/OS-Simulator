@@ -13,11 +13,12 @@ public class PCB  {
 		++count;
 		ID = count;
 		state = State.Ready;
-	//	minAddress=minAdd;
-	//	maxAddress=maxAdd;
+	
 		pc = 0;
 		
 	}
+
+
 
 
 	public int getMinAddress() {
