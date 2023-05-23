@@ -2,7 +2,6 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.LinkedList;
@@ -17,6 +16,7 @@ private Queue<Integer> readyList;
 private Queue<Integer> blockedOnFileAccess;
 private Queue<Integer> blockedOnReadInput;
 private Queue<Integer> blockedOnScreenOutput;
+private Queue<Integer> blocked;
 private Value fileAccess=Value.one;
 private Value readInput= Value.one;
 private Value screenOutput= Value.one;
@@ -38,6 +38,7 @@ public Interpreter(int timeSlice){
 	blockedOnFileAccess =new LinkedList<>();
 	blockedOnReadInput =new LinkedList<>();
 	blockedOnScreenOutput =new LinkedList<>();
+	blocked =new LinkedList<>();
 	
 }
 public void arrival (int a1 ,String p1, int a2 ,String p2 , int a3 , String p3){
@@ -132,10 +133,61 @@ public  void loadintomemory(Process p)
 
 		
 }
-//bas btfade el mem
-private void clear() 
-{
 
+public Vector<Pair> getProcessOnDisk() throws IOException{
+	Vector<Pair> valuesOnDisk= new Vector();
+	BufferedReader reader;
+		reader= new BufferedReader(new FileReader("./src/Processes/disk.txt"));
+		String line= reader.readLine();
+			while (line!=null)
+		{
+			String [] values = line.split(" ");
+			switch(values[0])
+			{
+			case "id":
+				valuesOnDisk.add(new Pair ("id",Integer.parseInt(values[1])));
+				break;
+			case "state":
+				
+				
+				State oldState = null;
+				if(values[1].equals("Running"))
+					oldState=State.Running;
+				if(values[1].equals("Blocked"))
+					oldState=State.Blocked;
+				if(values[1].equals("Ready"))
+					oldState=State.Ready;
+				if(values[1].equals("Finished"))
+					oldState=State.Finished;
+				
+				valuesOnDisk.add( new Pair ("state",oldState));
+				break;
+			case "pc":
+				valuesOnDisk.add(new Pair ("pc",Integer.parseInt(values[1])));
+				break;
+			case "min":
+				valuesOnDisk.add(new Pair ("min",Integer.parseInt(values[1])));
+				break;	
+			case "max":
+				valuesOnDisk.add(new Pair ("max",Integer.parseInt(values[1])));
+				break;
+				
+			case "instruction":
+				valuesOnDisk.add( new Pair ("instruction",(values[1])));
+				break;
+					
+			
+			
+		}
+	}
+			reader.close();
+	return valuesOnDisk;
+		
+	
+}
+//bas btfade el mem
+public void clear() 
+{
   String filePath = "./src/Processes/disk.txt" ;
   String dataToWrite = "";
 	if (memory[1].getValue()!=State.Running) 
@@ -177,15 +229,33 @@ private void clear()
 }
 	
 	
-private void swapMemDisk(  int idToRun )
+private void swapMemDisk(  int idToRun ) throws IOException
 {
-	clear();
 	if(idToRun == (int)memory[0].getValue()||idToRun ==  (int)memory[5].getValue())
 		return;
-	
-	int count =0;
+	Vector<Pair> resultFromDisk= new Vector();
+	for(int i=0;i<getProcessOnDisk().size();i++){
+		resultFromDisk.add(new Pair(getProcessOnDisk().get(i).getVariable(),getProcessOnDisk().get(i).getValue()));
+	}
+	clear();
 	boolean flag = memory[0]==null;
-	BufferedReader reader;
+	if(flag){
+		for(int i=0;i<5;i++)
+			memory[i]= new Pair(resultFromDisk.get(i).getVariable(),resultFromDisk.get(i).getValue());
+		for(int i=10;i<25;i++)
+			memory[i]= new Pair(resultFromDisk.get(i).getVariable(),resultFromDisk.get(i).getValue());
+	}
+	else{
+		int count2=0;
+		for(int i=5;i<10;i++){
+		memory[i]= new Pair(resultFromDisk.get(i).getVariable(),resultFromDisk.get(i).getValue());
+		count2++;}
+		
+	    for(int i=25;i<40;i++)
+		memory[i]= new Pair(resultFromDisk.get(count2).getVariable(),resultFromDisk.get(count2).getValue());
+		
+	}
+/*	BufferedReader reader;
 	try {
 		reader= new BufferedReader(new FileReader("./src/Processes/disk.txt"));
 		String line= reader.readLine();
@@ -274,14 +344,9 @@ private void swapMemDisk(  int idToRun )
 				
 				}
 			}
-		}
+		}*/
 			
 			
-	} catch (IOException e) {
-		// TODO Auto-generated catch block
-		e.printStackTrace();
-	}
-	
 	
 	
 }
@@ -300,159 +365,183 @@ public void semWait(String resource){
 	case "FileAccess": 
 		
 		if(fileAccess==Value.one) {
-		int idWithResource=-1;
-		for(int i=0;i<memory.length;i++){
-			if(memory[i].getVariable().equals("ID"))
-				idWithResource= (int) memory[i].getValue();
-			if((memory[i].getVariable()).equals("state") && memory[i].getValue()==State.Running){
-				break;
-		}}
+		
 		fileAccess=Value.zero;
-		pid_file=idWithResource;
+		pid_file=curPID;
 		}
 		
-	else{int pid=-1;
+	else{
 		for(int i=0;i<memory.length;i++){
-			if(memory[i].getVariable().equals("ID"))
-				pid= (int) memory[i].getValue();
-			if((memory[i].getVariable()).equals("state") && memory[i].getValue()==State.Running){
-				memory[i].setValue(State.Blocked);
-				blockedOnFileAccess.add(pid);
-				break;
+			if(memory[i]!=null){
+			if(memory[i].getVariable().equals("id") && (int)memory[i].getValue()==curPID){
+				memory[i+1].setValue(State.Blocked);
+				blockedOnFileAccess.add(curPID);
+				blocked.add(curPID);
+				break;}
 		}}}
 		
 	case "ReadInput": 
 		
 		if(readInput==Value.one) {
-		int idWithResource=-1;
-		for(int i=0;i<memory.length;i++){
-			if(memory[i].getVariable().equals("ID"))
-				idWithResource= (int) memory[i].getValue();
-			if((memory[i].getVariable()).equals("state") && memory[i].getValue()==State.Running){
-				break;
-		}}
-		readInput=Value.zero;
-		pid_read=idWithResource;
+			readInput=Value.zero;
+			pid_read=curPID;
 		}
 	
-		else{int pid=-1;
-		for(int i=0;i<memory.length;i++){
-			if(memory[i].getVariable().equals("ID"))
-				pid= (int) memory[i].getValue();
-			if((memory[i].getVariable()).equals("state") && memory[i].getValue()==State.Running){
-				memory[i].setValue(State.Blocked);
-				blockedOnReadInput.add(pid);
-				break;
-		}}}
+		else{
+			
+			for(int i=0;i<memory.length;i++){
+				if(memory[i]!=null){
+				if(memory[i].getVariable().equals("id") && (int)memory[i].getValue()==curPID){
+					memory[i+1].setValue(State.Blocked);
+					blockedOnReadInput.add(curPID);
+					blocked.add(curPID);
+					break;}
+			}}
+		}
 	
 	case "ScreenOutput": 
 		
 		if(screenOutput==Value.one) {
-		int idWithResource=-1;
-		for(int i=0;i<memory.length;i++){
-			if(memory[i].getVariable().equals("ID"))
-				idWithResource= (int) memory[i].getValue();
-			if((memory[i].getVariable()).equals("state") && memory[i].getValue()==State.Running){
-				break;
-		}}
-		screenOutput=Value.zero;
-		pid_output=idWithResource;
+			screenOutput=Value.zero;
+			pid_output=curPID;
+		
 		}
 	
-		else{int pid=-1;
-		for(int i=0;i<memory.length;i++){
-			if(memory[i].getVariable().equals("ID"))
-				pid= (int) memory[i].getValue();
-			if((memory[i].getVariable()).equals("state") && memory[i].getValue()==State.Running){
-				memory[i].setValue(State.Blocked);
-				blockedOnScreenOutput.add(pid);
+		else{
+			for(int i=0;i<memory.length;i++){
+			if(memory[i]!=null){
+			if(memory[i].getVariable().equals("id") && (int)memory[i].getValue()==curPID){
+				memory[i+1].setValue(State.Blocked);
+				blockedOnScreenOutput.add(curPID);
+				blocked.add(curPID);
 				break;
-		}}}
-		
-	}
+		}}}}}
 	
 }
 
-public void semSignal(String resource){
+public void semSignal(String resource) throws IOException{
 	switch (resource){
 	case "FileAccess": 
-		int idWithResource=-1;
-		for(int i=0;i<memory.length;i++){
-			if(memory[i].getVariable().equals("ID"))
-				idWithResource= (int) memory[i].getValue();
-			if((memory[i].getVariable()).equals("state") && memory[i].getValue()==State.Running){
-				break;
-		}}
-		if(fileAccess==Value.zero && pid_file==idWithResource) {
+		if(fileAccess==Value.zero && pid_file==curPID) {
 	            if(blockedOnFileAccess.size()==0)
 	            	fileAccess=Value.one;
 	            else{
-	            	int newProcessWithResource=-1;
 	            	pid_file= blockedOnFileAccess.peek();
+	            	boolean found=false;
 	            	for(int i=0;i<memory.length;i++){
-	        			if(memory[i].getVariable().equals("ID"))
-	        				newProcessWithResource= (int) memory[i].getValue();
-	        			if((memory[i].getVariable()).equals("state") && memory[i].getValue()==State.Blocked && newProcessWithResource==pid_file){
-	        				memory[i].setValue(State.Ready);
+	        			if((memory[i].getVariable()).equals("id") && (int)memory[i].getValue()==pid_file && memory[i+1].getVariable().equals("state") &&memory[i+1].getValue().equals("Blocked")){
+	        				memory[i+1].setValue(State.Ready);
+	        				blockedOnFileAccess.remove();
+	        				blocked.remove();
+	        				readyList.add(pid_file);
+	        				found=true;
 	        		}}
-	            }
-		}
+	            	
+	            	if(!found){
+	            		Vector <Pair> changeOnDisk= new Vector();
+	            		for(int i=0;i<getProcessOnDisk().size();i++){
+	            			changeOnDisk.add(new Pair(getProcessOnDisk().get(i).getVariable(),getProcessOnDisk().get(i).getValue()));
+	            		}
+
+	            		  String filePath = "./src/Processes/disk.txt" ;
+	            		  String dataToWrite = "";
+	            		  for (int i =0; i<changeOnDisk.size(); i++)
+	            		{           dataToWrite+= changeOnDisk.get(i).getVariable() + " ";
+	            					dataToWrite+= changeOnDisk.get(i).getValue() +"/n";
+	            					
+	            				}
+	            		  try (PrintWriter out = new PrintWriter(new FileOutputStream(filePath, false ))) {
+	            		      out.println(dataToWrite);
+	            		  } catch (FileNotFoundException e) {
+	            		      e.printStackTrace();
+	            		  }
+	            		  
+	            	}
+	            }}
 		
 
 		
-	case "ReadInput": 
-		int idWithResource2=-1;
-		for(int i=0;i<memory.length;i++){
-			if(memory[i].getVariable().equals("ID"))
-				idWithResource2= (int) memory[i].getValue();
-			if((memory[i].getVariable()).equals("state") && memory[i].getValue()==State.Running){
-				break;
-		}}
-		if(readInput==Value.zero && pid_read==idWithResource2) {
-	            if(blockedOnReadInput.size()==0)
-	            	readInput=Value.one;
-	            else{
-	            	int newProcessWithResource=-1;
-	            	pid_read= blockedOnReadInput.peek();
-	            	for(int i=0;i<memory.length;i++){
-	        			if(memory[i].getVariable().equals("ID"))
-	        				newProcessWithResource= (int) memory[i].getValue();
-	        			if((memory[i].getVariable()).equals("state") && memory[i].getValue()==State.Blocked && newProcessWithResource==pid_file){
-	        				memory[i].setValue(State.Ready);
-	        		}}
-	            }
-		}
+	case "screenOutput": 
+		if(screenOutput==Value.zero && pid_output==curPID) {
+            if(blockedOnScreenOutput.size()==0)
+            	screenOutput=Value.one;
+            else{
+            	pid_output= blockedOnScreenOutput.peek();
+            	boolean found=false;
+            	for(int i=0;i<memory.length;i++){
+        			if((memory[i].getVariable()).equals("id") && (int)memory[i].getValue()==pid_output && memory[i+1].getVariable().equals("state") &&memory[i+1].getValue().equals("Blocked")){
+        				memory[i+1].setValue(State.Ready);
+        				blockedOnScreenOutput.remove();
+        				blocked.remove();
+        				readyList.add(pid_output);
+        				found=true;
+        		}}
+            	
+            	if(!found){
+            		Vector <Pair> changeOnDisk= new Vector();
+            		for(int i=0;i<getProcessOnDisk().size();i++){
+            			changeOnDisk.add(new Pair(getProcessOnDisk().get(i).getVariable(),getProcessOnDisk().get(i).getValue()));
+            		}
+
+            		  String filePath = "./src/Processes/disk.txt" ;
+            		  String dataToWrite = "";
+            		  for (int i =0; i<changeOnDisk.size(); i++)
+            		{           dataToWrite+= changeOnDisk.get(i).getVariable() + " ";
+            					dataToWrite+= changeOnDisk.get(i).getValue() +"/n";
+            					
+            				}
+            		  try (PrintWriter out = new PrintWriter(new FileOutputStream(filePath, false ))) {
+            		      out.println(dataToWrite);
+            		  } catch (FileNotFoundException e) {
+            		      e.printStackTrace();
+            		  }
+            		  
+            	}
+            }}
+	case "readInput": 
+		if(readInput==Value.zero && pid_read==curPID) {
+            if(blockedOnReadInput.size()==0)
+            	readInput=Value.one;
+            else{
+            	pid_read= blockedOnReadInput.peek();
+            	boolean found=false;
+            	for(int i=0;i<memory.length;i++){
+        			if((memory[i].getVariable()).equals("id") && (int)memory[i].getValue()==pid_read && memory[i+1].getVariable().equals("state") &&memory[i+1].getValue().equals("Blocked")){
+        				memory[i+1].setValue(State.Ready);
+        				blockedOnScreenOutput.remove();
+        				blocked.remove();
+        				readyList.add(pid_read);
+        				found=true;
+        		}}
+            	
+            	if(!found){
+            		Vector <Pair> changeOnDisk= new Vector<Pair>();
+            		for(int i=0;i<getProcessOnDisk().size();i++){
+            			changeOnDisk.add(new Pair(getProcessOnDisk().get(i).getVariable(),getProcessOnDisk().get(i).getValue()));
+            		}
+
+            		  String filePath = "./src/Processes/disk.txt" ;
+            		  String dataToWrite = "";
+            		  for (int i =0; i<changeOnDisk.size(); i++)
+            		{           dataToWrite+= changeOnDisk.get(i).getVariable() + " ";
+            					dataToWrite+= changeOnDisk.get(i).getValue() +"/n";
+            					
+            				}
+            		  try (PrintWriter out = new PrintWriter(new FileOutputStream(filePath, false ))) {
+            		      out.println(dataToWrite);
+            		  } catch (FileNotFoundException e) {
+            		      e.printStackTrace();
+            		  }
+            		  
+            	}
+            }}}}}
 		
-	case "ScreenOutput": 
-		int idWithResource3=-1;
-		for(int i=0;i<memory.length;i++){
-			if(memory[i].getVariable().equals("ID"))
-				idWithResource3= (int) memory[i].getValue();
-			if((memory[i].getVariable()).equals("state") && memory[i].getValue()==State.Running){
-				break;
-		}}
-		if(readInput==Value.zero && pid_read==idWithResource3) {
-	            if(blockedOnScreenOutput.size()==0)
-	            	screenOutput=Value.one;
-	            else{
-	            	int newProcessWithResource=-1;
-	            	pid_read= blockedOnScreenOutput.peek();
-	            	for(int i=0;i<memory.length;i++){
-	        			if(memory[i].getVariable().equals("ID"))
-	        				newProcessWithResource= (int) memory[i].getValue();
-	        			if((memory[i].getVariable()).equals("state") && memory[i].getValue()==State.Blocked && newProcessWithResource==pid_file){
-	        				memory[i].setValue(State.Ready);
-	        		}}
-	            }
-		}
-		
-		
-	}
 	
-}
+	
 
 
 
 
 
-}
+
+
