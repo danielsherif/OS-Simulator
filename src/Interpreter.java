@@ -451,6 +451,21 @@ public void semSignal(String resource){
 	
 }
 
+public void execute( )
+{
+	int i= 10;
+	while(memory[i]!= null)
+	{
+		
+		
+	}
+}
+
+
+public void assign()
+{
+	
+}
 
 
 
