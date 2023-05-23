@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.LinkedList;
 import java.util.Queue;
+import java.util.Scanner;
 import java.util.Stack;
 import java.util.Vector;
 
@@ -419,7 +420,8 @@ public void semWait(String resource){
 	
 }
 
-public void semSignal(String resource) throws IOException{
+public void semSignal(String resource) throws IOException
+{
 	switch (resource){
 	case "FileAccess": 
 		if(fileAccess==Value.zero && pid_file==curPID) {
@@ -534,28 +536,95 @@ public void semSignal(String resource) throws IOException{
             		  }
             		  
             	}
-            }}}}}
-		
-	
-	
+            }}
+		}
+	}
 
 
-
-public void execute( )
+public void execute( ) throws IOException
 {
+	int clk= 2;
 	int i= 10;
+	
 	while(memory[i]!= null)
 	{
 		
+	String[] words = ((String) memory[i].getValue()).split(" ");
+	String ins= words[0];
+	
+
+		switch(ins)
+		{
+		case "semWait" :
+			semWait(words[1]);
+			break;
+			
+		case "semSignal":
+			semSignal(words[1]);
+			break;
 		
+		case "printFromTo":	
+		
+			int y= Integer.parseInt( words[2]);
+			for (int x= Integer.parseInt( words[1]); x<y; x++)
+			{
+				System.out.print(x);
+			}
+			break;
+			
+		case "assign":
+			//input 
+			if(words[2]=="input")
+			{
+				Scanner scanner = new Scanner(System.in);
+
+		        System.out.print("Please enter a value");
+		        Object temp= scanner.nextLine(); // Read a line of text from the user
+
+			}
+			//read file 
+			
+			//value zy el nas 
+			
+			
+			
+			break;
+			
+		case "print":
+			System.out.print(memory[i].getValue());
+			break;
+			
+		case "writeFile":
+			
+			String filePath = words[1]+ ".txt";
+			  String dataToWrite = words[2];
+			  try (PrintWriter out = new PrintWriter(new FileOutputStream(filePath))) {
+			      out.println(dataToWrite);
+			  } catch (FileNotFoundException e) {
+			      e.printStackTrace();
+			  }
+			  break;
+		case "readFile":
+			BufferedReader reader;
+			reader= new BufferedReader(new FileReader(words[1]+".txt"));
+			//msh 3arfa a print ba2a wala eh
+			break;
+			
+		}
+		clk--;
 	}
 }
 
 
-public void assign()
-{
-	
 }
+		
+	
+
+	
+
+
+
+
 
 
 
