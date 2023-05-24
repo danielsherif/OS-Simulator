@@ -543,83 +543,191 @@ public void semSignal(String resource) throws IOException
 
 public void execute( ) throws IOException
 {
-	int clk= 2;
-	int i= 10;
 	
-	while(memory[i]!= null)
+	int id = readyList.peek();
+	if(id !=(int) memory[0].getValue()&&  id != (int) memory[5].getValue())
+		swapMemDisk(id);
+		
+	//change el state men ready le running 
+	// el sem signal w wait wel hbal da 
+	if(memory[0]!= null||memory[5]!= null)
 	{
 		
-	String[] words = ((String) memory[i].getValue()).split(" ");
-	String ins= words[0];
-	
-
-		switch(ins)
+	if(id ==(int) memory[0].getValue())
+	{
+		int index= 10;
+	for(int i= 2; i<-1; i--)
+	{
+		if(memory[index]!= null)
 		{
-		case "semWait" :
-			semWait(words[1]);
-			break;
-			
-		case "semSignal":
-			semSignal(words[1]);
-			break;
-		
-		case "printFromTo":	
-		
-			int y= Integer.parseInt( words[2]);
-			for (int x= Integer.parseInt( words[1]); x<y; x++)
-			{
-				System.out.print(x);
+			String[] words = ((String) memory[i].getValue()).split(" ");
+			String input1= words[0];
+			String input2= words[1];
+			String input3="";
+			String input4="";
+			if (words.length >= 3) {
+			    input3 = words[2];
 			}
-			break;
-			
-		case "assign":
-			//input 
-			if(words[2]=="input")
-			{
-				Scanner scanner = new Scanner(System.in);
 
-		        System.out.print("Please enter a value");
-		        Object temp= scanner.nextLine(); // Read a line of text from the user
-
+			if (words.length >= 4) {
+			    input4 = words[3];
 			}
-			//read file 
 			
-			//value zy el nas 
-			
-			
-			
-			break;
-			
-		case "print":
-			System.out.print(memory[i].getValue());
-			break;
-			
-		case "writeFile":
-			
-			String filePath = words[1]+ ".txt";
-			  String dataToWrite = words[2];
-			  try (PrintWriter out = new PrintWriter(new FileOutputStream(filePath))) {
-			      out.println(dataToWrite);
-			  } catch (FileNotFoundException e) {
-			      e.printStackTrace();
-			  }
-			  break;
-		case "readFile":
-			BufferedReader reader;
-			reader= new BufferedReader(new FileReader(words[1]+".txt"));
-			//msh 3arfa a print ba2a wala eh
-			break;
-			
+			implement(input1 , input2, input3 , input4);
 		}
-		clk--;
+			
+	}
+	}
+	else 
+	{
+		int index= 25;
+		for(int i= 2; i<-1; i--)
+		{
+			if(memory[index]!= null)
+			{
+				String[] words = ((String) memory[i].getValue()).split(" ");
+				String input1= words[0];
+				String input2= words[1];
+				String input3="";
+				String input4="";
+				if (words.length >= 3) {
+				    input3 = words[2];
+				}
+
+				if (words.length >= 4) {
+				    input4 = words[3];
+				}
+				
+				implement(input1 , input2, input3 , input4);
+			}
+				
+		}
+	}
 	}
 }
 
 
+
+
+private void implement(String input1 , String input2, String input3,  String input4 ) throws IOException 
+{
+	Object value;
+	
+	switch(input1)
+	{
+	case "semWait" :
+		semWait(input2);
+		break;
+		
+	case "semSignal":
+		semSignal(input2);
+		break;
+	
+	case "printFromTo":	
+	
+		int y= Integer.parseInt(input2);
+		for (int x= Integer.parseInt(input1); x<y; x++)
+		{
+			System.out.print(x);
+		}
+		break;
+		
+	case "assign":
+		
+	if(input3.equals("input"))
+		{
+		String in= (String) getY(input2,"");
+		implement(input1, input2, in, "");
+		
+		}
+	else if (input3.equals("readFile"))
+	{
+		String in= (String) getY(input3,input4);
+		implement(input1, input2 , in, "");
+	}
+	else 
+	{
+		if(containsOnlyNumbers(input3))
+			{
+			value= Integer.parseInt(input3);
+			
+			}
+		else 
+			{
+			value= input3;
+			}
+			
+	}
+		
+		break;
+		
+	case "print":
+		System.out.print(input2);
+		break;
+		
+	case "writeFile":
+		
+		String filePath =input2 + ".txt";
+		  String dataToWrite = input3;
+		  try (PrintWriter out = new PrintWriter(new FileOutputStream(filePath))) {
+		      out.println(dataToWrite);
+		  } catch (FileNotFoundException e) {
+		      e.printStackTrace();
+		  }
+		  break;
+	case "readFile":
+		readFile(input2);
+		
+		break;
+		
+	}
+	return;
+}
+
+
+public Object getY(String y, String yy) throws IOException
+{
+	Object out= null;
+	
+	if (y.equals("input"))
+		{
+		Scanner scanner = new Scanner(System.in);
+		System.out.print("Please enter a value");
+        out = scanner.nextLine(); // Read a line of text from the user
+		}
+	else 
+		out = readFile(yy);
+	
+	return out;
 }
 		
 	
+public static boolean containsOnlyNumbers(String str) {
+    for (char c : str.toCharArray()) {
+        if (!Character.isDigit(c)) {
+            return false;
+        }
+    }
+    return true;
+}
 
+public static String readFile(String fileName) {
+    StringBuilder content = new StringBuilder();
+    
+    try (BufferedReader reader = new BufferedReader(new FileReader(fileName))) {
+        String line;
+        while ((line = reader.readLine()) != null) {
+            content.append(line).append("\n");
+        }
+    } catch (IOException e) {
+        e.printStackTrace();
+    }
+    
+    return content.toString();
+}
+
+
+}
 	
 
 
