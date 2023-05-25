@@ -54,26 +54,27 @@ public class Interpreter {
 
 	
 	public void arrival (int a1 ,String p1, int a2 ,String p2 , int a3 , String p3){
-		while (count !=3){
+		int counter=0;
+		while (counter !=3){
 
 
 			if (clk==a1){
 
 				//this.readyList.add(new Process(p1).getPcb().getID());
 				loadintomemory(new Process(p1));
-				count++;
+				counter++;
 				//break;
 			}
 			if (clk==a2){
 				//this.readyList.add(new Process(p2));
 				loadintomemory(new Process(p2));
-				count++;
+				counter++;
 				//break;
 			}
 			if (clk==a3){
 				//this.readyList.add(new Process(p2));
 				loadintomemory(new Process(p3));
-				count++;
+				counter++;
 				//break;
 
 			}
@@ -96,14 +97,14 @@ public class Interpreter {
 		if (memory[0]==null){
 			memory[0]=new Pair ("id",p.getPcb().getID());
 			memory[1]=new Pair ("state",p.getPcb().getState());
-			memory[2]=new Pair ("pc",p.getPcb().getPc());
+			memory[2]=new Pair ("pc",10);
 			memory[3]=new Pair ("min",p.getPcb().getMinAddress());
 			memory[4]=new Pair ("max",p.getPcb().getMaxAddress());
 			p.getPcb().setMinAddress(10);
-
+            p.getPcb().setPc(10);
 			int j=0;
-			for (int i=10;i<p.getInstructions().size()+10;i++){ //deh error bardo
-				if (p.getInstructions().get(j)!=null){
+			for (int i=10;i<22;i++){ //deh error bardo
+				if (p.getInstructions().get(j)!=null && i<p.getInstructions().size()){
 					memory[i]=new Pair ("Instruction",p.getInstructions().get(j));
 					j++;
 
@@ -111,20 +112,21 @@ public class Interpreter {
 				//break; //shelt deh error
 
 			}
-			p.getPcb().setMaxAddress(j);
+			p.getPcb().setMaxAddress(24);
 
-
+          
 		}
 		else if (memory[5]==null){
 			memory[5]=new Pair ("id",p.getPcb().getID());
 			memory[6]=new Pair ("state",p.getPcb().getState());
-			memory[7]=new Pair ("pc",p.getPcb().getPc());
+			memory[7]=new Pair ("pc",25);
 			memory[8]=new Pair ("min",p.getPcb().getMinAddress());
 			memory[9]=new Pair ("max",p.getPcb().getMaxAddress());
 			p.getPcb().setMinAddress(25);
+			p.getPcb().setPc(25);
 			int j=0;
-			for (int i=25;i<p.getInstructions().size()+25;i++){
-				if (p.getInstructions().get(j)!=null){
+			for (int i=25;i<37;i++){
+				if (p.getInstructions().get(j)!=null && i<p.getInstructions().size()){
 					memory[i]=new Pair ("Instruction",p.getInstructions().get(j));
 					j++;
 
@@ -132,7 +134,7 @@ public class Interpreter {
 				//break;
 
 			}
-			p.getPcb().setMaxAddress(24+j); 
+			p.getPcb().setMaxAddress(39); 
 
 
 		}
@@ -188,7 +190,9 @@ public class Interpreter {
 			case "instruction":
 				valuesOnDisk.add( new Pair ("instruction",(values[1])));
 				break;
-
+				
+			default: valuesOnDisk.add(new Pair(values[0],values[1]));	
+            // mesh mehandeleen case variables law 3amalna assign we7atena fel mem
 
 
 			}
@@ -199,7 +203,31 @@ public class Interpreter {
 
 	}
 	
-	
+	public void clearOnly(int curPID){
+		String filePath = "./src/Processes/disk.txt" ;
+		if (memory[0]!=null &&(int) memory[0].getValue()==curPID) 
+		{
+			for (int i =0; i<5; i++)
+			{
+				memory[i]=null;
+			}
+			for (int i =10; i<25; i++) //error
+			{
+				memory[i]=null;
+			}
+		}
+		else if (memory[5]!=null &&(int) memory[5].getValue()==curPID)
+		{
+			for (int i =5; i<10; i++)
+			{
+				memory[i]=null;
+			}
+			for (int i =25; i<40; i++)
+			{
+				memory[i]=null;
+			}
+		}
+	}
 	// btfade el mem w bet write ely etfada lel disk
 	public void clear() 
 	{
@@ -244,9 +272,9 @@ public class Interpreter {
 	}
 
 
-	private void swapMemDisk(  int idToRun ) throws IOException
+	public void swapMemDisk(   ) throws IOException
 	{
-		if(idToRun == (int)memory[0].getValue()||idToRun ==  (int)memory[5].getValue())
+		if(curPID == (int)memory[0].getValue()||curPID ==  (int)memory[5].getValue())
 			return;
 		Vector<Pair> resultFromDisk= new Vector<Pair>();
 		for(int i=0;i<getProcessOnDisk().size();i++){
@@ -254,21 +282,34 @@ public class Interpreter {
 		}
 		clear();
 		boolean flag = memory[0]==null;
+		int pcOld=(int)resultFromDisk.get(2).getValue();
+		int minAddressOld=(int)resultFromDisk.get(3).getValue();
+		int maxAddressOld= (int)resultFromDisk.get(4).getValue();
 		if(flag){
-			for(int i=0;i<5;i++)
+			if(minAddressOld!=10){
+				resultFromDisk.get(3).setValue(25);
+				resultFromDisk.get(2).setValue(10+pcOld-minAddressOld);
+				resultFromDisk.get(4).setValue(39);}
+			int count3=0;
+			for(int i=0;i<5;i++){
 				memory[i]= new Pair(resultFromDisk.get(i).getVariable(),resultFromDisk.get(i).getValue());
-			for(int i=10;i<25;i++)
-				memory[i]= new Pair(resultFromDisk.get(i).getVariable(),resultFromDisk.get(i).getValue());
-		}
+				count3++;}
+			for(int i=10;i<resultFromDisk.size()+5;i++)
+				memory[i]= new Pair(resultFromDisk.get(count3).getVariable(),resultFromDisk.get(count3).getValue());
+		        count3++;}
 		else{
+			if(minAddressOld!=25){
+				resultFromDisk.get(3).setValue(10);
+				resultFromDisk.get(2).setValue(25+pcOld-minAddressOld);
+			    resultFromDisk.get(4).setValue(24);}
 			int count2=0;
 			for(int i=5;i<10;i++){
 				memory[i]= new Pair(resultFromDisk.get(i).getVariable(),resultFromDisk.get(i).getValue());
 				count2++;}
 
-			for(int i=25;i<40;i++)
+			for(int i=25;i<resultFromDisk.size()+20;i++)
 				memory[i]= new Pair(resultFromDisk.get(count2).getVariable(),resultFromDisk.get(count2).getValue());
-
+                count2++;
 		}
 
 
@@ -345,7 +386,7 @@ public class Interpreter {
 	public void semSignal(String resource) throws IOException
 	{
 		switch (resource){
-		case "FileAccess": 
+		case "file": 
 			if(fileAccess==Value.zero && pid_file==curPID) {
 				if(blockedOnFileAccess.size()==0)
 					fileAccess=Value.one;
@@ -385,7 +426,7 @@ public class Interpreter {
 
 
 
-		case "screenOutput": 
+		case "userOutput": 
 			if(screenOutput==Value.zero && pid_output==curPID) {
 				if(blockedOnScreenOutput.size()==0)
 					screenOutput=Value.one;
@@ -422,7 +463,7 @@ public class Interpreter {
 
 					}
 				}}
-		case "readInput": 
+		case "userInput": 
 			if(readInput==Value.zero && pid_read==curPID) {
 				if(blockedOnReadInput.size()==0)
 					readInput=Value.one;
@@ -465,24 +506,23 @@ public class Interpreter {
 
 	public void execute( ) throws IOException
 	{
-
-		int id = readyList.peek();
-		if(id !=(int) memory[0].getValue()&&  id != (int) memory[5].getValue())
-			swapMemDisk(id);
+		if(curPID !=(int) memory[0].getValue()&&  curPID != (int) memory[5].getValue())
+			swapMemDisk();
 
 		//change el state men ready le running 
 		// el sem signal w wait wel hbal da 
+		int x=clk+timeSlice;
 		if(memory[0]!= null||memory[5]!= null)
 		{
 
-			if(id ==(int) memory[0].getValue())
+			if(curPID ==(int) memory[0].getValue())
 			{
-				int index= 10;
-				for(int i= 2; i<-1; i--)
+				int pc=(int) memory[2].getValue();
+				for(int i= 0; i<timeSlice && pc<22; i++)
 				{
-					if(memory[index]!= null)
+					if(memory[pc]!= null )
 					{
-						String[] words = ((String) memory[i].getValue()).split(" ");
+						String[] words = ((String) memory[pc].getValue()).split(" ");
 						String input1= words[0];
 						String input2= words[1];
 						String input3="";
@@ -495,19 +535,22 @@ public class Interpreter {
 							input4 = words[3];
 						}
 
-						implement(input1 , input2, input3 , input4);
+						implement(clk, x,input1 , input2, input3 , input4);
+						pc++;
 					}
 
 				}
+				memory[2].setValue(pc);
+				
 			}
 			else 
-			{
-				int index= 25;
-				for(int i= 2; i<-1; i--)
+			{   
+				int pc=(int) memory[7].getValue();
+				for(int i= 0; i<timeSlice && pc<37; i++)
 				{
-					if(memory[index]!= null)
+					if(memory[pc]!= null)
 					{
-						String[] words = ((String) memory[i].getValue()).split(" ");
+						String[] words = ((String) memory[pc].getValue()).split(" ");
 						String input1= words[0];
 						String input2= words[1];
 						String input3="";
@@ -520,22 +563,71 @@ public class Interpreter {
 							input4 = words[3];
 						}
 
-						implement(input1 , input2, input3 , input4);
+						implement(clk,x,input1 , input2, input3 , input4);
+						pc++;
 					}
+					
 
 				}
+				memory[7].setValue(pc);
 			}
 		}
 	}
 
+     
+	public void scheduleProcesses() throws IOException{
+		if(readyList.isEmpty())
+			return;
+		if((int)memory[0].getValue()==curPID){
+			int lastInstructionAddress=-1;
+			for(int i=10;i<22;i++){
+				if(memory[i]!=null &&memory[i].getVariable().equals("instruction"))
+				   lastInstructionAddress=i;}
+			if(lastInstructionAddress==(int)memory[2].getValue()){
+				count++;
+				clearOnly(curPID);
+			}}
+		else if((int)memory[5].getValue()==curPID){
+				int lastInstructionAddress=-1;
+				for(int i=25;i<37;i++){
+					if(memory[i]!=null &&memory[i].getVariable().equals("instruction"))
+					   lastInstructionAddress=i;}
+				if(lastInstructionAddress==(int)memory[2].getValue()){
+					count++;
+					clearOnly(curPID);
+				}}
+		else {
+			if(memory[0]!=null && (int)memory[0].getValue()==curPID){
+				if(!(memory[1].getValue()==State.Blocked)){
+					readyList.add(curPID);
+					memory[1].setValue(State.Ready);
+				}
+			}
+			else if(!(memory[6].getValue()==State.Blocked)){
+					readyList.add(curPID);
+					memory[6].setValue(State.Ready);
+					
+				}}
+		if(readyList.peek()!=null){
+			curPID=readyList.remove();
+			swapMemDisk();
+			execute();
+			scheduleProcesses();
+		}
+	}
+			
+			
+			
+		
+	
 
 
-
-	private void implement(String input1 , String input2, String input3,  String input4 ) throws IOException 
-	{
+	public void implement(int clk,int incrementedClk, String input1 , String input2, String input3,  String input4 ) throws IOException 
+	{  if(clk>=incrementedClk)
+		return;
+	
 		Object value;
-
-		switch(input1)
+        switch(input1)
 		{
 		case "semWait" :
 			semWait(input2);
@@ -547,8 +639,8 @@ public class Interpreter {
 
 		case "printFromTo":	
 
-			int y= Integer.parseInt(input2);
-			for (int x= Integer.parseInt(input1); x<y; x++)
+			int y= Integer.parseInt(input3);
+			for (int x= Integer.parseInt(input2); x<y; x++)
 			{
 				System.out.print(x);
 			}
@@ -556,19 +648,20 @@ public class Interpreter {
 
 		case "assign":
 
+		
 			if(input3.equals("input"))
 			{
 				String in= (String) getY(input2,"");
-				implement(input1, input2, in, "");
-
+				implement(clk,incrementedClk,input1, input2, in, "");
+                
 			}
 			else if (input3.equals("readFile"))
 			{
 				String in= (String) getY(input3,input4);
-				implement(input1, input2 , in, "");
+				implement(clk,incrementedClk,input1, input2 , in, "");
 			}
 			else 
-			{
+			{ 
 				if(containsOnlyNumbers(input3))
 				{
 					value= Integer.parseInt(input3);
@@ -578,8 +671,22 @@ public class Interpreter {
 				{
 					value= input3;
 				}
-
+               if((int)memory[0].getValue()==curPID){
+            	   for(int j=22;j<25;j++){
+            		   if(memory[j]==null){
+            			   memory[j]= new Pair(input2,value);
+            	           break;}
+               }
+				
 			}
+               else{
+            	   for(int j=37;j<40;j++){
+            		   if(memory[j]==null){
+            			   memory[j]= new Pair(input2,value);
+            	           break;}}
+               }}
+
+			
 
 			break;
 
@@ -603,6 +710,7 @@ public class Interpreter {
 			break;
 
 		}
+		clk++;
 		return;
 	}
 
