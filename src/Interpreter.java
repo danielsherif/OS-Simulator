@@ -7,7 +7,6 @@ import java.io.PrintWriter;
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.Scanner;
-import java.util.Stack;
 import java.util.Vector;
 
 public class Interpreter {
@@ -55,23 +54,20 @@ public class Interpreter {
 
 	
 	public void arrival (int a1 ,String p1, int a2 ,String p2 , int a3 , String p3) throws IOException{
-		int counter=0;
-		String file1= "";
+		
 		int min;
 		if(a1<=a2 && a1<=a3)
 		{
 			min=a1;
-			file1=p1;
-		}
+				}
 		else if(a2<=a3 && a2<=a1)
 		{
 			min=a2;
-			file1=p2;
+	
 		}
 		else 
 		{
 			min=a3;
-			file1=p3;
 		}
 
 
@@ -308,8 +304,12 @@ public class Interpreter {
 
 	public void swapMemDisk(   ) throws IOException
 	{
-		if( (memory[0]!=null && curPID == (int)memory[0].getValue() ) || (memory[5]!=null &&   curPID ==  (int)memory[5].getValue()) )
-			return;
+		if(memory[0]!=null && curPID == (int)memory[0].getValue()){
+				memory[1].setValue(State.Running);
+				return;}
+		else if (memory[5]!=null &&   curPID ==  (int)memory[5].getValue()){
+			    memory[6].setValue(State.Running);
+			    return;}
 		Vector<Pair> resultFromDisk= new Vector<Pair>();
 		for(int i=0;i<getProcessOnDisk().size();i++){
 			resultFromDisk.add(new Pair(getProcessOnDisk().get(i).getVariable(),getProcessOnDisk().get(i).getValue()));
@@ -318,7 +318,7 @@ public class Interpreter {
 		boolean flag = memory[0]==null;
 		int pcOld=(int)resultFromDisk.get(2).getValue();
 		int minAddressOld=(int)resultFromDisk.get(3).getValue();
-		int maxAddressOld= (int)resultFromDisk.get(4).getValue();
+		resultFromDisk.get(1).setValue(State.Running);
 		if(flag){
 			if(minAddressOld!=10){
 				resultFromDisk.get(3).setValue(25);
@@ -477,7 +477,7 @@ public class Interpreter {
 						}}
 
 					if(!found){
-						Vector <Pair> changeOnDisk= new Vector();
+						Vector <Pair> changeOnDisk= new Vector<Pair>();
 						for(int i=0;i<getProcessOnDisk().size();i++){
 							changeOnDisk.add(new Pair(getProcessOnDisk().get(i).getVariable(),getProcessOnDisk().get(i).getValue()));
 						}
@@ -610,8 +610,6 @@ public class Interpreter {
 
      
 	public void scheduleProcesses(int a1, String p1, int a2, String p2) throws IOException{
-		if(readyList.isEmpty())
-			return;
 //		if(numOfProcesses == 1)
 //		{
 //			execute();
@@ -652,6 +650,9 @@ public class Interpreter {
 
 			}
 		}
+		
+		if(readyList.isEmpty() || count==3)
+			return;
 		curPID=readyList.remove();
 		swapMemDisk();
 		execute( a1,  p1,  a2,  p2);
@@ -774,7 +775,8 @@ public class Interpreter {
 		{
 			Scanner scanner = new Scanner(System.in);
 			System.out.print("Please enter a value");
-			out = scanner.nextLine(); // Read a line of text from the user
+			out = scanner.nextLine(); 
+			scanner.close();   // Read a line of text from the user
 		}
 		else 
 			out = readFile(yy);
