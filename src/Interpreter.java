@@ -23,7 +23,7 @@ public class Interpreter {
 	private int pid_file;
 	private int pid_read;
 	private int pid_output;
-	private static int clk;
+	private int clk=0;
 	private static int count=0;
 	private static int numOfProcesses=0;
 
@@ -179,7 +179,7 @@ public class Interpreter {
 		reader= new BufferedReader(new FileReader("./src/Processes/disk.txt"));
 		String line= reader.readLine();
 		while (line!=null)
-		{
+		{   
 			String [] values = line.split(" ");
 			if(!(values.length ==0 || values.length ==1))
 			{
@@ -277,7 +277,7 @@ public class Interpreter {
 			for (int i =10; i<25 ; i++)    //error
 			{
 				if(memory[i]!=null )
-				{
+				{ 
 				dataToWrite+= memory[i].getVariable() + " ";
 				dataToWrite+= memory[i].getValue() +"\n";
 				memory[i]=null;
@@ -345,11 +345,17 @@ public class Interpreter {
 				count3++;
 				}
 			for(int i=10;i<resultFromDisk.size()+5;i++)
-			{
+			{   if(count3<resultFromDisk.size() &&resultFromDisk.get(count3).getVariable().equals("instruction") ){
 				memory[i]= new Pair(resultFromDisk.get(count3).getVariable(),resultFromDisk.get(count3).getValue());
 		        count3++;
 		        }
 		}
+			for(int i=12;i<15;i++)
+			{   if(count3<resultFromDisk.size() &&resultFromDisk.get(count3)!=null){
+				memory[i]= new Pair(resultFromDisk.get(count3).getVariable(),resultFromDisk.get(count3).getValue());
+		        count3++;
+		        }
+		}}
 		else{
 			if(minAddressOld!=25){
 				resultFromDisk.get(3).setValue(10);
@@ -362,12 +368,15 @@ public class Interpreter {
 				count2++;
 				}
 
-			for(int i=25;i<resultFromDisk.size()+20;i++)
-			{
+			for(int i=37;i<40;i++)
+			{  
+				if(count2<resultFromDisk.size() &&resultFromDisk.get(count2)!=null){
 				memory[i]= new Pair(resultFromDisk.get(count2).getVariable(),resultFromDisk.get(count2).getValue());
                 count2++;
 			}
 		}
+			
+			}
 		
 
 	}
@@ -564,7 +573,7 @@ public class Interpreter {
 	public void execute(int a1, String p1, int a2, String p2 ) throws IOException
 	{
 		
-		if( memory[0]!=null &&   curPID !=(int) memory[0].getValue()&&  curPID != (int) memory[5].getValue())
+		if( (memory[0]!=null &&   curPID !=(int) memory[0].getValue()) &&  (memory[5]!=null &&curPID != (int) memory[5].getValue()))
 			swapMemDisk();
 
 		//change el state men ready le running 
@@ -577,9 +586,9 @@ public class Interpreter {
 			{
 				int pc=(int) memory[2].getValue();
 				for(int i= 0; i<timeSlice && pc<22; i++)
-				{
+				{ 
 					if(memory[pc]!= null )
-					{
+					{ 
 						String[] words = ((String) memory[pc].getValue()).split(" ");
 						String input1= words[0];
 						String input2= words[1];
@@ -608,22 +617,18 @@ public class Interpreter {
 				for(int i= 0; i<timeSlice && pc<37; i++)
 				{
 					if(memory[pc]!= null)
-					{
+					{  System.out.println(memory[pc].getVariable()+ " " + memory[pc].getValue());
 						String[] words = ((String) memory[pc].getValue()).split(" ");
 						String input1= words[0];
-						String input2= "";
+						String input2= words[1];
 						String input3="";
 						String input4="";
 						
-
-						if (words.length >= 2) {
-							input2 = words[1];
-						}
 						if (words.length >= 3) {
 							input3 = words[2];
 						}
 
-						if (words.length >= 4) {
+						if (words.length >=4) {
 							input4 = words[3];
 						}
 
@@ -635,7 +640,9 @@ public class Interpreter {
 				}
 				
 			}
+			
 		}
+		scheduleProcesses(a1,p1,a2,p2);
 	}
 
      
@@ -666,19 +673,19 @@ public class Interpreter {
 				//clearOnly(curPID);
 				memory[6].setValue(State.Finished);
 			}
-		}
-		else {
+		}//PC>lastInstructionAddress
+
 			if(memory[0]!=null && (int)memory[0].getValue()==curPID){
-				if(!(memory[1].getValue()==State.Blocked) &&!( readyList.contains(memory[0].getValue())) ){
+				if(memory[1].getValue()==State.Running  ){
 					readyList.add(curPID);
 					memory[1].setValue(State.Ready);
 				}
 			}
-			else if( memory[5]!=null && !(memory[6].getValue()==State.Blocked) &&!( readyList.contains(memory[5].getValue())) ){
+			else if( memory[5]!=null && memory[6].getValue()==State.Running &&  (int)memory[5].getValue()==curPID){
 				readyList.add(curPID);
 				memory[6].setValue(State.Ready);
 
-			}
+			
 		}
 		
 		
@@ -699,7 +706,9 @@ public class Interpreter {
 
 
 	public void implement(int incrementedClk, String input1 , String input2, String input3,  String input4, int a1, String p1, int a2, String p2) throws IOException 
-	{  if(clk>=incrementedClk)
+	{ printMemory();
+		
+		if(clk>=incrementedClk)
 		return;
 	
 		Object value;
@@ -787,7 +796,7 @@ public class Interpreter {
 
 		}
 		clk++;
-		//printMemory();
+		
 		if(clk == a1)
 		{
 			loadintomemory(new Process(p1), a1, p1, a2, p2);

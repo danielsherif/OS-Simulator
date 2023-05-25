@@ -1,15 +1,14 @@
-id 3
+id 1
 state Ready
-pc 25
-min 25
-max 39
+pc 12
+min 10
+max 24
 instruction semWait userInput
 instruction assign a input
+instruction assign b input
 instruction semSignal userInput
-instruction semWait file
-instruction assign b readFile a
-instruction semSignal file
 instruction semWait userOutput
-instruction print b
+instruction printFromTo a b
 instruction semSignal userOutput
+a 5
 
