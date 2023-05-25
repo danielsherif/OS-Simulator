@@ -10,12 +10,14 @@ public class Process  {
 	private Vector<String> instructions;
 	
 	public Process(String fileName){
+		instructions = new Vector<String>();
 		BufferedReader reader;
 		try {
 			reader= new BufferedReader(new FileReader(fileName));
 			String line= reader.readLine();
 			while (line!=null){
 				instructions.add(line);
+				line = reader.readLine();
 			}
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
