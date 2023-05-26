@@ -1,0 +1,13 @@
+id 1
+state Running
+pc 11
+min 10
+max 24
+instruction semWait userInput
+instruction assign a input
+instruction assign b input
+instruction semSignal userInput
+instruction semWait userOutput
+instruction printFromTo a b
+instruction semSignal userOutput
+

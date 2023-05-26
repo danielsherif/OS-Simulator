@@ -598,6 +598,19 @@ public class Interpreter {
 				int pc=(int) memory[2].getValue();
 				for(int i= 0; i<timeSlice && pc<22; i++)
 				{ 
+					
+//					
+//					if(this.getClk() == a1 )
+//					{   System.out.println("EL SA3A"+ " " +this.clk);
+//						loadintomemory(new Process(p1), a1, p1, a2, p2);
+//					}
+//					if(this.getClk() == a2 )
+//						
+//					{System.out.println("EL SA3A"+ " " +this.clk);
+//						loadintomemory(new Process(p2), a1, p1, a2, p2);
+//					
+//					}
+					
 					if(memory[pc]!= null )
 						System.out.println(pc);
 					{   System.out.println(memory[pc].getValue());
@@ -722,9 +735,11 @@ public class Interpreter {
 	public void implement(int incrementedClk, String input1 , String input2, String input3,  String input4, int a1, String p1, int a2, String p2) throws IOException 
 	{ 
 		
+		System.out.println("process RUNNING "+ curPID);
 		if(this.getClk()==incrementedClk){
 		return;
 		}
+		++this.clk;
 		if(this.getClk() == a1 )
 		{   System.out.println("EL SA3A"+ " " +this.clk);
 			loadintomemory(new Process(p1), a1, p1, a2, p2);
@@ -761,6 +776,7 @@ public class Interpreter {
 		
 			if(input3.equals("input"))
 			{
+				System.out.println("process RUNNING ASSIGN "+ curPID);
 				String in= (String) getY(input3,"");
 				implement(incrementedClk,input1, input2, in, "",  a1,  p1,  a2,  p2);
                 
@@ -820,7 +836,7 @@ public class Interpreter {
 			break;
 
 		}
-		++this.clk;
+		
 		
 		
 		
@@ -835,8 +851,8 @@ public class Interpreter {
 		{
 			Scanner scanner = new Scanner(System.in);
 			System.out.print("Please enter a value");
-			out = scanner.nextLine(); 
-			scanner.close();   // Read a line of text from the user
+				out = scanner.nextLine(); 
+//				scanner.close();   // Read a line of text from the user
 		}
 		else 
 			out = readFile(yy);
@@ -873,6 +889,7 @@ public class Interpreter {
 	    System.out.println("Memory contents:");
 	    for (Pair pair : memory) {
 	        if (pair != null) {
+	        	
 	            System.out.println(pair.getVariable() + ": " + pair.getValue());
 	            //System.out.println(pair.getValue().getClass().getName());
 	        }
