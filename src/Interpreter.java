@@ -971,15 +971,15 @@ public void execute(int a1, String p1, int a2, String p2 ) throws IOException
 							}
 						}
 					}
-//					if(!(input1.equals("assign"))|| no)
-//						{
-						if(this.clk<this.clkIncremented||no)
-					
+					if(!(input1.equals("assign"))|| no)
 						{
+//						if(this.clk<this.clkIncremented||no)
+//					
+//						{
 							pc++;
-						}
-						
 //						}
+						
+						}
 					
 				}
 				if((int)memory[0].getValue()==curPID)
@@ -1041,17 +1041,17 @@ public void execute(int a1, String p1, int a2, String p2 ) throws IOException
 								}
 							}
 						}
-//						
-//						if(!(input1.equals("assign"))|| no)
-//						{
-						if(this.clk<this.clkIncremented||no)
-					
+						
+						if(!(input1.equals("assign"))|| no)
 						{
+//						if(this.clk<this.clkIncremented||no)
+//					
+//						{
 							pc++;
 							
-						}
-						
 //						}
+						
+						}
 					
 				}
 				if((int)memory[5].getValue()==curPID)
