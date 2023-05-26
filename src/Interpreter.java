@@ -395,15 +395,16 @@ public void semSignal(String resource) throws IOException
 //						readyList.add(pid_file);
 //						found=true;
 //					}}
-				if(memory[0]!=null&&(int)memory[0].getValue()==pid_read)
+				if(memory[0]!=null&&(int)memory[0].getValue()==pid_file)
 				{
 					if(memory[1].getValue()==State.Blocked)
 					{
 						memory[1].setValue(State.Ready);
-						blockedOnReadInput.remove();
+						blockedOnFileAccess.remove();
 						blocked.remove();
-						readyList.add(pid_read);
+						readyList.add(pid_file);
 						found=true;
+					
 					}
 				}
 				else if(memory[5]!=null&&(int)memory[5].getValue()==pid_read)
@@ -411,9 +412,9 @@ public void semSignal(String resource) throws IOException
 					if(memory[6].getValue()==State.Blocked)
 					{
 						memory[6].setValue(State.Ready);
-						blockedOnReadInput.remove();
+						blockedOnFileAccess.remove();
 						blocked.remove();
-						readyList.add(pid_read);
+						readyList.add(pid_file);
 						found=true;
 					}
 				}
@@ -425,7 +426,11 @@ public void semSignal(String resource) throws IOException
 					for(int i=0;i<getProcessOnDisk().size();i++){
 						changeOnDisk.add(new Pair(getProcessOnDisk().get(i).getVariable(),getProcessOnDisk().get(i).getValue()));
 					}
-
+                    changeOnDisk.get(1).setValue(State.Ready);
+                    pid_file=blockedOnFileAccess.peek();
+                    blocked.remove();
+                    blockedOnFileAccess.remove();
+                    readyList.add((int)changeOnDisk.get(0).getValue());
 					String filePath = "./src/Processes/disk.txt" ;
 					String dataToWrite = "";
 					for (int i =0; i<changeOnDisk.size(); i++)
@@ -459,25 +464,25 @@ public void semSignal(String resource) throws IOException
 //						readyList.add(pid_output);
 //						found=true;
 //					}}
-				if(memory[0]!=null&&(int)memory[0].getValue()==pid_read)
+				if(memory[0]!=null&&(int)memory[0].getValue()==pid_output)
 				{
 					if(memory[1].getValue()==State.Blocked)
 					{
 						memory[1].setValue(State.Ready);
-						blockedOnReadInput.remove();
+						blockedOnScreenOutput.remove();
 						blocked.remove();
-						readyList.add(pid_read);
+						readyList.add(pid_output);
 						found=true;
 					}
 				}
-				else if(memory[5]!=null&&(int)memory[5].getValue()==pid_read)
+				else if(memory[5]!=null&&(int)memory[5].getValue()==pid_output)
 				{
 					if(memory[6].getValue()==State.Blocked)
 					{
 						memory[6].setValue(State.Ready);
-						blockedOnReadInput.remove();
+						blockedOnScreenOutput.remove();
 						blocked.remove();
-						readyList.add(pid_read);
+						readyList.add(pid_output);
 						found=true;
 					}
 				}
@@ -497,6 +502,11 @@ public void semSignal(String resource) throws IOException
 					dataToWrite+= changeOnDisk.get(i).getValue() +"\n";
 
 					}
+					 changeOnDisk.get(1).setValue(State.Ready);
+					   pid_output=blockedOnScreenOutput.peek();
+	                    blocked.remove();
+	                    blockedOnScreenOutput.remove();
+	                    readyList.add((int)changeOnDisk.get(0).getValue());
 					try (PrintWriter out = new PrintWriter(new FileOutputStream(filePath, false ))) {
 						out.println(dataToWrite);
 					} catch (FileNotFoundException e) {
@@ -566,6 +576,11 @@ public void semSignal(String resource) throws IOException
 					dataToWrite+= changeOnDisk.get(i).getValue() +"\n";
 
 					}
+					 changeOnDisk.get(1).setValue(State.Ready);
+					 pid_read=blockedOnReadInput.peek();
+	                    blocked.remove();
+	                    blockedOnReadInput.remove();
+	                    readyList.add((int)changeOnDisk.get(0).getValue());
 					try (PrintWriter out = new PrintWriter(new FileOutputStream(filePath, false ))) {
 						out.println(dataToWrite);
 					} catch (FileNotFoundException e) {
