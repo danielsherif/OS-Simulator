@@ -28,6 +28,12 @@ public class Interpreter {
 	private  int count=0;
 	private int curPID;
 	private int clkIncremented;
+	
+	public Object tempP1;
+	public Object tempP2;
+	public Object tempP3;
+	
+	
 	public Interpreter(int timeSlice){
 
 		this.timeSlice=timeSlice;
@@ -350,14 +356,38 @@ public void semSignal(String resource) throws IOException
 			else{
 				pid_file= blockedOnFileAccess.peek();
 				boolean found=false;
-				for(int i=0;i<memory.length;i++){
-					if((memory[i].getVariable()).equals("id") && (int)memory[i].getValue()==pid_file && memory[i+1].getVariable().equals("state") &&memory[i+1].getValue().equals("Blocked")){
-						memory[i+1].setValue(State.Ready);
-						blockedOnFileAccess.remove();
+//				for(int i=0;i<memory.length;i++){
+//					if((memory[i].getVariable()).equals("id") && (int)memory[i].getValue()==pid_file && memory[i+1].getVariable().equals("state") &&memory[i+1].getValue().equals("Blocked")){
+//						memory[i+1].setValue(State.Ready);
+//						blockedOnFileAccess.remove();
+//						blocked.remove();
+//						readyList.add(pid_file);
+//						found=true;
+//					}}
+				if(memory[0]!=null&&(int)memory[0].getValue()==pid_read)
+				{
+					if(memory[1].getValue()==State.Blocked)
+					{
+						memory[1].setValue(State.Ready);
+						blockedOnReadInput.remove();
 						blocked.remove();
-						readyList.add(pid_file);
+						readyList.add(pid_read);
 						found=true;
-					}}
+					}
+				}
+				else if(memory[5]!=null&&(int)memory[5].getValue()==pid_read)
+				{
+					if(memory[6].getValue()==State.Blocked)
+					{
+						memory[6].setValue(State.Ready);
+						blockedOnReadInput.remove();
+						blocked.remove();
+						readyList.add(pid_read);
+						found=true;
+					}
+				}
+				
+				
 
 				if(!found){
 					Vector <Pair> changeOnDisk= new Vector<Pair>();
@@ -382,7 +412,7 @@ public void semSignal(String resource) throws IOException
 			}}
 
 
-
+		break;
 	case "userOutput": 
 		if(screenOutput==Value.zero && pid_output==curPID) {
 			if(blockedOnScreenOutput.size()==0)
@@ -390,14 +420,38 @@ public void semSignal(String resource) throws IOException
 			else{
 				pid_output= blockedOnScreenOutput.peek();
 				boolean found=false;
-				for(int i=0;i<memory.length;i++){
-					if((memory[i].getVariable()).equals("id") && (int)memory[i].getValue()==pid_output && memory[i+1].getVariable().equals("state") &&memory[i+1].getValue().equals("Blocked")){
-						memory[i+1].setValue(State.Ready);
-						blockedOnScreenOutput.remove();
+//				for(int i=0;i<memory.length;i++){
+//					if((memory[i].getVariable()).equals("id") && (int)memory[i].getValue()==pid_output && memory[i+1].getVariable().equals("state") &&memory[i+1].getValue().equals("Blocked")){
+//						memory[i+1].setValue(State.Ready);
+//						blockedOnScreenOutput.remove();
+//						blocked.remove();
+//						readyList.add(pid_output);
+//						found=true;
+//					}}
+				if(memory[0]!=null&&(int)memory[0].getValue()==pid_read)
+				{
+					if(memory[1].getValue()==State.Blocked)
+					{
+						memory[1].setValue(State.Ready);
+						blockedOnReadInput.remove();
 						blocked.remove();
-						readyList.add(pid_output);
+						readyList.add(pid_read);
 						found=true;
-					}}
+					}
+				}
+				else if(memory[5]!=null&&(int)memory[5].getValue()==pid_read)
+				{
+					if(memory[6].getValue()==State.Blocked)
+					{
+						memory[6].setValue(State.Ready);
+						blockedOnReadInput.remove();
+						blocked.remove();
+						readyList.add(pid_read);
+						found=true;
+					}
+				}
+				
+				
 
 				if(!found){
 					Vector <Pair> changeOnDisk= new Vector<Pair>();
@@ -420,6 +474,7 @@ public void semSignal(String resource) throws IOException
 
 				}
 			}}
+		break;
 	case "userInput": 
 		if(readInput==Value.zero && pid_read==curPID) {
 			if(blockedOnReadInput.size()==0)
@@ -427,14 +482,45 @@ public void semSignal(String resource) throws IOException
 			else{
 				pid_read= blockedOnReadInput.peek();
 				boolean found=false;
-				for(int i=0;i<memory.length;i++){
-					if((memory[i].getVariable()).equals("id") && (int)memory[i].getValue()==pid_read && memory[i+1].getVariable().equals("state") &&memory[i+1].getValue().equals("Blocked")){
-						memory[i+1].setValue(State.Ready);
-						blockedOnScreenOutput.remove();
+//				for(int i=0;i<memory.length;i++)
+//				{
+////					if( memory[i]!=null &&(memory[i].getVariable()).equals("id") && (int)memory[i].getValue()==pid_read && memory[i+1].getVariable().equals("state") &&memory[i+1].getValue().equals("Blocked")){
+//					
+//						if(memory[i]!=null &&(int)memory[i].getValue()==pid_read)
+//						{	if(memory[i+1].getValue().equals("Blocked"))
+//						{
+//						memory[i+1].setValue(State.Ready);
+//						blockedOnScreenOutput.remove();
+//						blocked.remove();
+//						readyList.add(pid_read);
+//						found=true;
+//						}
+//						}
+//				}
+				if(memory[0]!=null&&(int)memory[0].getValue()==pid_read)
+				{
+					if(memory[1].getValue()==State.Blocked)
+					{
+						memory[1].setValue(State.Ready);
+						blockedOnReadInput.remove();
 						blocked.remove();
 						readyList.add(pid_read);
 						found=true;
-					}}
+					}
+				}
+				else if(memory[5]!=null&&(int)memory[5].getValue()==pid_read)
+				{
+					if(memory[6].getValue()==State.Blocked)
+					{
+						memory[6].setValue(State.Ready);
+						blockedOnReadInput.remove();
+						blocked.remove();
+						readyList.add(pid_read);
+						found=true;
+					}
+				}
+				
+				
 
 				if(!found){
 					Vector <Pair> changeOnDisk= new Vector<Pair>();
@@ -457,6 +543,7 @@ public void semSignal(String resource) throws IOException
 
 				}
 			}}
+		break;
 	}
 }
 public Vector<Pair> getProcessOnDisk() throws IOException{
@@ -500,13 +587,16 @@ public Vector<Pair> getProcessOnDisk() throws IOException{
 			break;
 
 		case "instruction":
-			valuesOnDisk.add( new Pair ("instruction",(values[1])));
+			String str="";
+			for(int i=1;i<values.length;i++){
+				str+= values[i]+ " ";
+			}
+			valuesOnDisk.add( new Pair ("instruction",str));
 			break;
 			
 			
 		default:
-			    System.out.println("alooo");
-			    System.out.println(values[0]);
+			    
 		        valuesOnDisk.add(new Pair(values[0],values[1]));	
         // mesh mehandeleen case variables law 3amalna assign we7atena fel mem
 
@@ -554,44 +644,147 @@ public void implement(String input1 , String input2, String input3,  String inpu
 
 	case "assign":
 
-	
+		System.out.println(curPID+ " "+ input3);	
 		if(input3.equals("input"))
 		{
-			System.out.println("process RUNNING ASSIGN "+ curPID);
-			String in= (String) getY(input3,"");
-			implement(input1, input2, in, "",  a1,  p1,  a2,  p2);
-            
+			
+			
+			//new code
+			if(curPID==1)// first program 
+				{
+				tempP1=(String) getY(input3,"");
+				if((int)memory[0].getValue()==curPID) //if this process is the first one at memory
+				{
+					int pc= (int)memory[2].getValue();
+					memory[pc]= new Pair ("instruction",input1+" "+input2 +" "+(String) tempP1); // change the content of this instruction 
+				}
+				else 
+				{
+					int pc= (int)memory[7].getValue();
+					memory[pc]= new Pair ("instruction",input1+" "+input2 +" "+(String) tempP1);
+				}
+				implement(input1, input2, (String) tempP1, "",  a1,  p1,  a2,  p2);
+				}
+			
+			
+			if(curPID==2)// first program 
+			{
+			tempP2=(String) getY(input3,"");
+			if((int)memory[0].getValue()==curPID) //if this process is the 2nd one at memory
+			{
+				int pc= (int)memory[2].getValue();
+				memory[pc]= new Pair ("instruction",input1+" "+input2 +" "+(String) tempP2); // change the content of this instruction 
+			}
+			else 
+			{
+				int pc= (int)memory[7].getValue();
+				memory[pc]= new Pair ("instruction",input1+" "+input2 +" "+(String) tempP2);
+			}
+			implement(input1, input2, (String) tempP2, "",  a1,  p1,  a2,  p2);
+			}
+			
+			if(curPID==3)// first program 
+			{
+			tempP3=(String) getY(input3,"");
+			if((int)memory[0].getValue()==curPID) //if this process is the first one at memory
+			{
+				int pc= (int)memory[2].getValue();
+				memory[pc]= new Pair ("instruction",input3+" "+(String) tempP3); // change the content of this instruction 
+			}
+			else 
+			{
+				int pc= (int)memory[7].getValue();
+				memory[pc]= new Pair ("instruction",input1+" "+input2 +" "+(String) tempP3);
+			}
+			implement(input1, input2, (String) tempP3, "",  a1,  p1,  a2,  p2);
+			}
 		}
-		else if (input3.equals("readFile"))
-		{
-			String in= (String) getY(input3,input4);
-			implement(input1, input2 , in, "",  a1,  p1,  a2,  p2);
-		}
+			else if (input3.equals("readFile"))
+			{
+				String in= (String) getY(input3,input4);
+				implement(input1, input2 , in, "",  a1,  p1,  a2,  p2);
+				
+				
+				
+				
+				if(curPID==1)// first program 
+				{
+				tempP1=(String) getY(input3,input4);
+				if((int)memory[0].getValue()==curPID) //if this process is the first one at memory
+				{
+					int pc= (int)memory[2].getValue();
+					memory[pc]= new Pair ("instruction",input2+" "+(String) tempP1); // change the content of this instruction 
+				}
+				else 
+				{
+					int pc= (int)memory[7].getValue();
+					memory[pc]= new Pair ("instruction",input2+" "+(String) tempP1);
+				}
+				implement(input1, input2, (String) tempP1, "",  a1,  p1,  a2,  p2);
+				}
+			
+			
+			if(curPID==2)// first program 
+			{
+			tempP1=(String) getY(input3,input4);
+			if((int)memory[0].getValue()==curPID) //if this process is the 2nd one at memory
+			{
+				int pc= (int)memory[2].getValue();
+				memory[pc]= new Pair ("instruction",input2+" "+(String) tempP2); // change the content of this instruction 
+			}
+			else 
+			{
+				int pc= (int)memory[7].getValue();
+				memory[pc]= new Pair ("instruction",input2+" "+(String) tempP2);
+			}
+			implement(input1, input2, (String) tempP2, "",  a1,  p1,  a2,  p2);
+			}
+			
+			if(curPID==3)// first program 
+			{
+			tempP1=(String) getY(input3,input4);
+			if((int)memory[0].getValue()==curPID) //if this process is the first one at memory
+			{
+				int pc= (int)memory[2].getValue();
+				memory[pc]= new Pair ("instruction",input3+" "+(String) tempP3); // change the content of this instruction 
+			}
+			}
+			}
 		else 
-		{ 
+		{
+			
 			if(containsOnlyNumbers(input3))
 			{
 				value= Integer.parseInt(input3);
 
 			}
-			else 
-			{
+			else
 				value= input3;
-			}
-           if((int)memory[0].getValue()==curPID){
-        	   for(int j=22;j<25;j++){
+			
+           if((int)memory[0].getValue()==curPID)
+           {
+        	   for(int j=22;j<25;j++)
+        	   {
         		   if(memory[j]==null){
         			   memory[j]= new Pair(input2,value);
         	           break;}
+        	   }
            }
 			
-		}
-           else{
-        	   for(int j=37;j<40;j++){
-        		   if(memory[j]==null){
+		
+           else
+           {
+        	   for(int j=37;j<40;j++)
+        	   {
+        		   if(memory[j]==null)
+        		   {
+        			   
         			   memory[j]= new Pair(input2,value);
-        	           break;}}
-           }}
+        	           break;
+        	           }
+        		   }
+           }
+           }
 
 		
 
@@ -649,7 +842,8 @@ public void execute(int a1, String p1, int a2, String p2 ) throws IOException
 		{
 			int pc=(int) memory[2].getValue();
 			for(int i= 0; i<timeSlice && pc<22; i++)
-			{ printMemory();
+			{ 
+				
 				
 //				
 //				if(this.getClk() == a1 )
@@ -664,10 +858,15 @@ public void execute(int a1, String p1, int a2, String p2 ) throws IOException
 //				}
 				
 				if(memory[pc]!= null )
-					System.out.println(pc);
-				{   System.out.println(memory[pc].getValue());
+				{	
+//					System.out.println(pc);
+					
+				  	System.out.println(curPID+" ins "+memory[pc].getValue());
+				  	printMemory();
+				  	
+				  	
 					String[] words = ((String) memory[pc].getValue()).split(" ");
-					System.out.println(words.length);
+//					System.out.println(words.length);
 					String input1= words[0];
 					
 					String input2= words[1];
@@ -691,7 +890,7 @@ public void execute(int a1, String p1, int a2, String p2 ) throws IOException
 				memory[2]=new Pair ("pc",pc);
 				else
 					break;
-				System.out.println("Memory[1] "+ memory[1].getValue()+ " Mariooma");
+//				System.out.println("Memory[1] "+ memory[1].getValue()+ " Mariooma");
 				if(memory[1].getValue()== State.Blocked)
 				{ 
 					break;
@@ -703,11 +902,20 @@ public void execute(int a1, String p1, int a2, String p2 ) throws IOException
 		}
 		else 
 		{   
+			
+			
+			
 			int pc=(int) memory[7].getValue();
 			for(int i= 0; i<timeSlice && pc<37; i++)
 			{
+				
+				
 				if(memory[pc]!= null)
 				{ //  System.out.println(memory[pc].getVariable()+ " " + memory[pc].getValue());
+					
+				 	System.out.println(curPID+" ins "+memory[pc].getValue());
+				 	printMemory();
+				 	
 					String[] words = ((String) memory[pc].getValue()).split(" ");
 					String input1= words[0];
 					String input2= words[1];
@@ -766,7 +974,7 @@ public  void loadintomemory(Process p, int a1, String p1, int a2, String p2) thr
 		int j=0;
 		for (int i=10;i<22;i++){ //deh error bardo
 			if ( i<p.getInstructions().size() +10 && p.getInstructions().get(j)!=null   ){
-				System.out.println(p.getInstructions().get(j)+ "  process"+ " "+ p.getPcb().getID());
+//				System.out.println(p.getInstructions().get(j)+ "  process"+ " "+ p.getPcb().getID());
 				memory[i]=new Pair ("instruction",p.getInstructions().get(j));
 				j++;
 
@@ -790,7 +998,7 @@ public  void loadintomemory(Process p, int a1, String p1, int a2, String p2) thr
 		int j=0;
 		for (int i=25;i<37;i++){
 			if ( i<p.getInstructions().size()+25 && p.getInstructions().get(j)!=null ){
-				System.out.println(p.getInstructions().get(j)+ "  process"+ " "+ p.getPcb().getID() + " dakhal hena");
+//				System.out.println(p.getInstructions().get(j)+ "  process"+ " "+ p.getPcb().getID() + " dakhal hena");
 				memory[i]=new Pair ("instruction",p.getInstructions().get(j));
 				j++;
 
@@ -805,7 +1013,7 @@ public  void loadintomemory(Process p, int a1, String p1, int a2, String p2) thr
 	else 
 	{ 
 		clear();
-		System.out.println("HENA "+ p.getPcb().getID());
+//		System.out.println("HENA "+ p.getPcb().getID());
 		loadintomemory(p,a1,p1,a2,p2);
        
 	}
@@ -842,7 +1050,8 @@ public void clear()
 		}
 	}
 	else if (memory[5]!=null &&(int)memory[5].getValue()==curPID && this.clk==this.clkIncremented)
-	{   System.out.println("Process" +"ppp"+ memory[5].getValue()+" mesh el mafrood tetme7y/ CLEAR()");
+	{
+//	{   System.out.println("Process" +"ppp"+ memory[5].getValue()+" mesh el mafrood tetme7y/ CLEAR()");
 		for (int i =5; i<10; i++)
 		{if(memory[i]!=null){
 			if(i==6 && memory[6].getValue()==State.Running && clk==clkIncremented){
