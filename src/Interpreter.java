@@ -629,11 +629,18 @@ public class Interpreter {
 							input4 = words[3];
 						}
 
+						
 						implement( x,input1 , input2, input3 , input4, a1,  p1,  a2,  p2);
 						pc++;
 						
 					}
+					
 					memory[2]=new Pair ("pc",pc);
+					if(memory[1].getValue()== State.Blocked)
+					{
+						return;
+					}
+					
 				}
 				
 
@@ -663,8 +670,13 @@ public class Interpreter {
 						pc++;
 					}
 					memory[7]=new Pair ("pc",pc);
+					if(memory[6].getValue()== State.Blocked)
+					{
+						return;
+					}
 
 				}
+				
 				
 			}
 			
