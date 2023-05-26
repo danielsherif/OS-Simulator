@@ -393,17 +393,17 @@ public class Interpreter {
 	}
 
 
-	public void executeInstructions(Vector<String> instruction){
+	/*public void executeInstructions(Vector<String> instruction){
 
 		switch(instruction.get(0)){
 
 		}
 
-	}
+	}*/
 
 	public void semWait(String resource){
 		switch (resource){
-		case "FileAccess": 
+		case "file": 
 
 			if(fileAccess==Value.one) {
 
@@ -421,7 +421,7 @@ public class Interpreter {
 							break;}
 					}}}
 
-		case "ReadInput": 
+		case "userInput": 
 
 			if(readInput==Value.one) {
 				readInput=Value.zero;
@@ -433,14 +433,14 @@ public class Interpreter {
 				for(int i=0;i<memory.length;i++){
 					if(memory[i]!=null){
 						if(memory[i].getVariable().equals("id") && (int)memory[i].getValue()==curPID){
-							memory[i+1].setValue(State.Blocked);
+							memory[i+1]= new Pair("state",State.Blocked);
 							blockedOnReadInput.add(curPID);
 							blocked.add(curPID);
 							break;}
 					}}
 			}
 
-		case "ScreenOutput": 
+		case "userOutput": 
 
 			if(screenOutput==Value.one) {
 				screenOutput=Value.zero;
@@ -582,7 +582,7 @@ public class Interpreter {
 
 
 	public void execute(int a1, String p1, int a2, String p2 ) throws IOException
-	{   printMemory();
+	{  
 		
 		if( (memory[0]!=null &&   curPID !=(int) memory[0].getValue()) &&  (memory[5]!=null &&curPID != (int) memory[5].getValue()))
 			swapMemDisk();
@@ -636,9 +636,10 @@ public class Interpreter {
 					}
 					
 					memory[2]=new Pair ("pc",pc);
+					System.out.println("Memory[1] "+ memory[1].getValue()+ " Mariooma");
 					if(memory[1].getValue()== State.Blocked)
-					{
-						return;
+					{ 
+						break;
 					}
 					
 				}
@@ -670,9 +671,10 @@ public class Interpreter {
 						pc++;
 					}
 					memory[7]=new Pair ("pc",pc);
+					System.out.println("Memory[1] "+ memory[6].getValue()+ " Dandoona");
 					if(memory[6].getValue()== State.Blocked)
 					{
-						return;
+						break;
 					}
 
 				}
@@ -745,20 +747,20 @@ public class Interpreter {
 
 
 	public void implement(int incrementedClk, String input1 , String input2, String input3,  String input4, int a1, String p1, int a2, String p2) throws IOException 
-	{ 
-		
-		System.out.println("process RUNNING "+ curPID);
+	{   System.out.println("CLK CYCLE" + " "+clk);
+		printMemory();
+	//	System.out.println("process RUNNING "+ curPID);
 		if(this.getClk()==incrementedClk){
 		return;
 		}
 		++this.clk;
 		if(this.getClk() == a1 )
-		{   System.out.println("EL SA3A"+ " " +this.clk);
+		{  // System.out.println("EL SA3A"+ " " +this.clk);
 			loadintomemory(new Process(p1), a1, p1, a2, p2);
 		}
 		if(this.getClk() == a2 )
 			
-		{System.out.println("EL SA3A"+ " " +this.clk);
+		{//System.out.println("EL SA3A"+ " " +this.clk);
 			loadintomemory(new Process(p2), a1, p1, a2, p2);
 		
 		}
