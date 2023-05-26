@@ -173,7 +173,7 @@ public class Interpreter {
 
 		}
 		else 
-		{
+		{ 
 			clear();
 			System.out.println("HENA "+ p.getPcb().getID());
 			loadintomemory(p,a1,p1,a2,p2);
@@ -184,6 +184,8 @@ public class Interpreter {
 
 	}
 
+	
+	
 	public Vector<Pair> getProcessOnDisk() throws IOException{
 		Vector<Pair> valuesOnDisk= new Vector<Pair>();
 		BufferedReader reader;
@@ -281,6 +283,11 @@ public class Interpreter {
 		{
 			for (int i =0; i<5; i++)
 			{   if(memory[i]!=null){
+				//Me7tageen ne check enaha khalaset
+				if(i==1 &&memory[1]!=null && memory[1].getValue()==State.Running){
+					readyList.add(curPID);
+					memory[1].setValue(State.Ready);
+				}
 				dataToWrite+= memory[i].getVariable() + " ";
 				dataToWrite+= memory[i].getValue() +"\n";
 				memory[i]=null;}
@@ -298,7 +305,10 @@ public class Interpreter {
 		else if ((int)memory[5].getValue()!=curPID)
 		{   System.out.println("Process" +"ppp"+ memory[5].getValue()+" mesh el mafrood tetme7y/ CLEAR()");
 			for (int i =5; i<10; i++)
-			{
+			{if(i==6 &&memory[6]!=null && memory[6].getValue()==State.Running){
+				readyList.add(curPID);
+				memory[6].setValue(State.Ready);
+			}
 				dataToWrite+= memory[i].getVariable() + " ";
 				dataToWrite+= memory[i].getValue() +"\n";
 				memory[i]=null;
@@ -420,6 +430,7 @@ public class Interpreter {
 							blocked.add(curPID);
 							break;}
 					}}}
+			break;
 
 		case "userInput": 
 
@@ -439,6 +450,7 @@ public class Interpreter {
 							break;}
 					}}
 			}
+			break;
 
 		case "userOutput": 
 
@@ -456,9 +468,13 @@ public class Interpreter {
 							blockedOnScreenOutput.add(curPID);
 							blocked.add(curPID);
 							break;
-						}}}}}
+						}}}
+				}
+		}
+		}
 
-	}
+	
+	       
 
 	public void semSignal(String resource) throws IOException
 	{
@@ -754,16 +770,6 @@ public class Interpreter {
 		return;
 		}
 		++this.clk;
-		if(this.getClk() == a1 )
-		{  // System.out.println("EL SA3A"+ " " +this.clk);
-			loadintomemory(new Process(p1), a1, p1, a2, p2);
-		}
-		if(this.getClk() == a2 )
-			
-		{//System.out.println("EL SA3A"+ " " +this.clk);
-			loadintomemory(new Process(p2), a1, p1, a2, p2);
-		
-		}
 	
 		Object value;
         switch(input1)
@@ -849,6 +855,16 @@ public class Interpreter {
 
 			break;
 
+		}
+        if(this.getClk() == a1 )
+		{  // System.out.println("EL SA3A"+ " " +this.clk);
+			loadintomemory(new Process(p1), a1, p1, a2, p2);
+		}
+		if(this.getClk() == a2 )
+			
+		{//System.out.println("EL SA3A"+ " " +this.clk);
+			loadintomemory(new Process(p2), a1, p1, a2, p2);
+		
 		}
 		
 		
