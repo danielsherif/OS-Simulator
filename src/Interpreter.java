@@ -31,7 +31,9 @@ public class Interpreter {
     private boolean ENTERED2=false;
 	private int curPID;
 
-
+	public Object tempP1;
+	public Object tempP2;
+	public Object tempP3;
    
 	public Interpreter(int timeSlice){
 
@@ -796,15 +798,123 @@ public class Interpreter {
 		
 			if(input3.equals("input"))
 			{
+				
+				
+				//new code
+				if(curPID==1)// first program 
+					{
+					tempP1=(String) getY(input3,"");
+					if((int)memory[0].getValue()==curPID) //if this process is the first one at memory
+					{
+						int pc= (int)memory[2].getValue();
+						memory[pc]= new Pair ("instruction",input2+" "+(String) tempP1); // change the content of this instruction 
+					}
+					else 
+					{
+						int pc= (int)memory[7].getValue();
+						memory[pc]= new Pair ("instruction",input2+" "+(String) tempP1);
+					}
+					implement(incrementedClk,input1, input2, (String) tempP1, "",  a1,  p1,  a2,  p2);
+					}
+				
+				
+				if(curPID==2)// first program 
+				{
+				tempP1=(String) getY(input3,"");
+				if((int)memory[0].getValue()==curPID) //if this process is the 2nd one at memory
+				{
+					int pc= (int)memory[2].getValue();
+					memory[pc]= new Pair ("instruction",input2+" "+(String) tempP2); // change the content of this instruction 
+				}
+				else 
+				{
+					int pc= (int)memory[7].getValue();
+					memory[pc]= new Pair ("instruction",input2+" "+(String) tempP2);
+				}
+				implement(incrementedClk,input1, input2, (String) tempP2, "",  a1,  p1,  a2,  p2);
+				}
+				
+				if(curPID==3)// first program 
+				{
+				tempP1=(String) getY(input3,"");
+				if((int)memory[0].getValue()==curPID) //if this process is the first one at memory
+				{
+					int pc= (int)memory[2].getValue();
+					memory[pc]= new Pair ("instruction",input3+" "+(String) tempP3); // change the content of this instruction 
+				}
+				else 
+				{
+					int pc= (int)memory[7].getValue();
+					memory[pc]= new Pair ("instruction",input2+" "+(String) tempP3);
+				}
+				implement(incrementedClk,input1, input2, (String) tempP3, "",  a1,  p1,  a2,  p2);
+				}
 				System.out.println("process RUNNING ASSIGN "+ curPID);
-				String in= (String) getY(input3,"");
-				implement(incrementedClk,input1, input2, in, "",  a1,  p1,  a2,  p2);
+				
+				//end new
+				
+//				String in= (String) getY(input3,"");
+				
+				
                 
 			}
 			else if (input3.equals("readFile"))
 			{
-				String in= (String) getY(input3,input4);
-				implement(incrementedClk,input1, input2 , in, "",  a1,  p1,  a2,  p2);
+				
+				
+				
+				
+				if(curPID==1)// first program 
+				{
+				tempP1=(String) getY(input3,input4);
+				if((int)memory[0].getValue()==curPID) //if this process is the first one at memory
+				{
+					int pc= (int)memory[2].getValue();
+					memory[pc]= new Pair ("instruction",input2+" "+(String) tempP1); // change the content of this instruction 
+				}
+				else 
+				{
+					int pc= (int)memory[7].getValue();
+					memory[pc]= new Pair ("instruction",input2+" "+(String) tempP1);
+				}
+				implement(incrementedClk,input1, input2, (String) tempP1, "",  a1,  p1,  a2,  p2);
+				}
+			
+			
+			if(curPID==2)// first program 
+			{
+			tempP1=(String) getY(input3,input4);
+			if((int)memory[0].getValue()==curPID) //if this process is the 2nd one at memory
+			{
+				int pc= (int)memory[2].getValue();
+				memory[pc]= new Pair ("instruction",input2+" "+(String) tempP2); // change the content of this instruction 
+			}
+			else 
+			{
+				int pc= (int)memory[7].getValue();
+				memory[pc]= new Pair ("instruction",input2+" "+(String) tempP2);
+			}
+			implement(incrementedClk,input1, input2, (String) tempP2, "",  a1,  p1,  a2,  p2);
+			}
+			
+			if(curPID==3)// first program 
+			{
+			tempP1=(String) getY(input3,input4);
+			if((int)memory[0].getValue()==curPID) //if this process is the first one at memory
+			{
+				int pc= (int)memory[2].getValue();
+				memory[pc]= new Pair ("instruction",input3+" "+(String) tempP3); // change the content of this instruction 
+			}
+			else 
+			{
+				int pc= (int)memory[7].getValue();
+				memory[pc]= new Pair ("instruction",input2+" "+(String) tempP3);
+			}
+			implement(incrementedClk,input1, input2, (String) tempP3, "",  a1,  p1,  a2,  p2);
+			}
+				
+				
+			
 			}
 			else 
 			{ 
