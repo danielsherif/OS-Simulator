@@ -1,6 +1,6 @@
 id 2
 state Blocked
-pc 25
+pc 26
 min 25
 max 39
 instruction semWait userInput

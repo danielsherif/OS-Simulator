@@ -84,21 +84,18 @@ public class Interpreter {
 
 			//this.readyList.add(new Process(p1).getPcb().getID());
 			this.loadintomemory(new Process(p1), a2,p2,a3,p3);
-			scheduleProcesses( a2,  p2,  a3,  p3);
 			//counter++;
 			//break;
 		}
 		if (min==a2){
 			//this.readyList.add(new Process(p2));
 			this.loadintomemory(new Process(p2),a1,p1,a3,p3);
-			scheduleProcesses( a1,  p1,  a3,  p3);
 			//counter++;
 			//break;
 		}
 		if (min==a3){
 			//this.readyList.add(new Process(p2));
 			this.loadintomemory(new Process(p3), a1,p1,a2,p2);
-			scheduleProcesses( a1,  p1,  a2,  p2);
 			//counter++;
 			//break;
 
@@ -136,7 +133,7 @@ public class Interpreter {
 			int j=0;
 			for (int i=10;i<22;i++){ //deh error bardo
 				if ( i<p.getInstructions().size() +10 && p.getInstructions().get(j)!=null   ){
-					//System.out.println(p.getInstructions().get(j)+ "  process"+ " "+ p.getPcb().getID());
+					System.out.println(p.getInstructions().get(j)+ "  process"+ " "+ p.getPcb().getID());
 					memory[i]=new Pair ("instruction",p.getInstructions().get(j));
 					j++;
 
@@ -145,11 +142,11 @@ public class Interpreter {
 
 			}
 			//p.getPcb().setMaxAddress(24);
-//			if(numOfProcesses == 0)
-//			{
-//				scheduleProcesses( a1,  p1,  a2,  p2);
-//				numOfProcesses++;
-//			}
+			if(numOfProcesses == 0)
+			{
+				scheduleProcesses( a1,  p1,  a2,  p2);
+				numOfProcesses++;
+			}
 //			if(count == 1 )
 //				scheduleProcesses();
           
@@ -165,7 +162,7 @@ public class Interpreter {
 			int j=0;
 			for (int i=25;i<37;i++){
 				if ( i<p.getInstructions().size()+25 && p.getInstructions().get(j)!=null ){
-					//System.out.println(p.getInstructions().get(j)+ "  process"+ " "+ p.getPcb().getID() + " dakhal hena");
+					System.out.println(p.getInstructions().get(j)+ "  process"+ " "+ p.getPcb().getID() + " dakhal hena");
 					memory[i]=new Pair ("instruction",p.getInstructions().get(j));
 					j++;
 
@@ -180,7 +177,7 @@ public class Interpreter {
 		else 
 		{ 
 			clear();
-			//System.out.println("HENA "+ p.getPcb().getID());
+			System.out.println("HENA "+ p.getPcb().getID());
 			loadintomemory(p,a1,p1,a2,p2);
            
 		}
@@ -237,8 +234,8 @@ public class Interpreter {
 				
 				
 			default:
-				   // System.out.println("alooo");
-				    //System.out.println(values[0]);
+				    System.out.println("alooo");
+				    System.out.println(values[0]);
 			        valuesOnDisk.add(new Pair(values[0],values[1]));	
             // mesh mehandeleen case variables law 3amalna assign we7atena fel mem
 
@@ -308,7 +305,7 @@ public class Interpreter {
 			}
 		}
 		else if ((int)memory[5].getValue()!=curPID)
-		{  // System.out.println("Process" +"ppp"+ memory[5].getValue()+" mesh el mafrood tetme7y/ CLEAR()");
+		{   System.out.println("Process" +"ppp"+ memory[5].getValue()+" mesh el mafrood tetme7y/ CLEAR()");
 			for (int i =5; i<10; i++)
 			{if(i==6 &&memory[6]!=null && memory[6].getValue()==State.Running){
 				readyList.add(curPID);
@@ -633,10 +630,10 @@ public class Interpreter {
 //					}
 					
 					if(memory[pc]!= null )
-						//System.out.println(pc);
-					{  // System.out.println(memory[pc].getValue());
+						System.out.println(pc);
+					{   System.out.println(memory[pc].getValue());
 						String[] words = ((String) memory[pc].getValue()).split(" ");
-						//System.out.println(words.length);
+						System.out.println(words.length);
 						String input1= words[0];
 						
 						String input2= words[1];
@@ -652,15 +649,12 @@ public class Interpreter {
 
 						
 						implement( x,input1 , input2, input3 , input4, a1,  p1,  a2,  p2);
-						if((int)memory[0].getValue()==curPID)
-							pc++;
-						else
-							break; //kalam gdeeeeed
+						pc++;
 						
 					}
 					
 					memory[2]=new Pair ("pc",pc);
-					//System.out.println("Memory[1] "+ memory[1].getValue()+ " Mariooma");
+					System.out.println("Memory[1] "+ memory[1].getValue()+ " Mariooma");
 					if(memory[1].getValue()== State.Blocked)
 					{ 
 						break;
@@ -676,7 +670,7 @@ public class Interpreter {
 				for(int i= 0; i<timeSlice && pc<37; i++)
 				{
 					if(memory[pc]!= null)
-					{ // System.out.println(memory[pc].getVariable()+ " " + memory[pc].getValue());
+					{  System.out.println(memory[pc].getVariable()+ " " + memory[pc].getValue());
 						String[] words = ((String) memory[pc].getValue()).split(" ");
 						String input1= words[0];
 						String input2= words[1];
@@ -692,14 +686,10 @@ public class Interpreter {
 						}
 
 						implement(x,input1 , input2, input3 , input4,  a1,  p1,  a2,  p2);
-						if((int)memory[0].getValue()==curPID)
-							pc++;
-						else
-							break; //kalam gdeeeeed
-						
+						pc++;
 					}
 					memory[7]=new Pair ("pc",pc);
-					//System.out.println("Memory[1] "+ memory[6].getValue()+ " Dandoona");
+					System.out.println("Memory[1] "+ memory[6].getValue()+ " Dandoona");
 					if(memory[6].getValue()== State.Blocked)
 					{
 						break;
@@ -721,11 +711,6 @@ public class Interpreter {
 //			execute();
 //			return;
 //		}
-		
-		System.out.println("SIZE OF READY LIST: "  +readyList.size());
-		if(readyList.isEmpty() || count==3)
-			return;
-		
 		if( memory[0]!=null && (int)memory[0].getValue()==curPID){
 			int lastInstructionAddress=-1;
 			for(int i=10;i<22;i++){
@@ -751,30 +736,24 @@ public class Interpreter {
 
 			if(memory[0]!=null && (int)memory[0].getValue()==curPID){
 				if(memory[1].getValue()==State.Running  ){
-					if(!(readyList.contains(curPID)))
-					{
-						readyList.add(curPID);
-						memory[1].setValue(State.Ready);
-					}
-					
+					readyList.add(curPID);
+					memory[1].setValue(State.Ready);
 				}
 			}
 			else if( memory[5]!=null && memory[6].getValue()==State.Running &&  (int)memory[5].getValue()==curPID){
-				if(!(readyList.contains(curPID)))
-				{
-					readyList.add(curPID);
-					memory[6].setValue(State.Ready);
-				}
+				readyList.add(curPID);
+				memory[6].setValue(State.Ready);
 
 			
 		}
 		
 		
+		if(readyList.isEmpty() || count==3)
+			return;
 		curPID=readyList.remove();
 		//System.out.println("");
 		swapMemDisk();
 		execute( a1,  p1,  a2,  p2);
-		
 		scheduleProcesses( a1,  p1,  a2,  p2);
 	}
 
@@ -786,17 +765,14 @@ public class Interpreter {
 
 
 	public void implement(int incrementedClk, String input1 , String input2, String input3,  String input4, int a1, String p1, int a2, String p2) throws IOException 
-	{   
-		
+	{   System.out.println("CLK CYCLE" + " "+clk);
+		printMemory();
 	//	System.out.println("process RUNNING "+ curPID);
 		if(this.getClk()==incrementedClk){
 		return;
 		}
-		System.out.println("CLK CYCLE" + " "+clk);
 		++this.clk;
-		
-		printMemory();
-		
+	
 		Object value;
         switch(input1)
 		{
@@ -873,7 +849,7 @@ public class Interpreter {
 				}
 				implement(incrementedClk,input1, input2, (String) tempP3, "",  a1,  p1,  a2,  p2);
 				}
-				//System.out.println("process RUNNING ASSIGN "+ curPID);
+				System.out.println("process RUNNING ASSIGN "+ curPID);
 				
 				//end new
 				
