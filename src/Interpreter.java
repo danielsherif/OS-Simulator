@@ -705,7 +705,7 @@ public void execute(int a1, String p1, int a2, String p2 ) throws IOException
 		{   
 			int pc=(int) memory[7].getValue();
 			for(int i= 0; i<timeSlice && pc<37; i++)
-			{printMemory();
+			{
 				if(memory[pc]!= null)
 				{ //  System.out.println(memory[pc].getVariable()+ " " + memory[pc].getValue());
 					String[] words = ((String) memory[pc].getValue()).split(" ");
