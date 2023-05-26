@@ -86,6 +86,7 @@ public class Interpreter {
 				count3++;
 				}
 			System.out.println("current process being swapped in from disk to memory: "+ memory[0].getValue());
+			System.out.println("");
 			for(int i=10;i<resultFromDisk.size()+5;i++)
 			{   if(count3<resultFromDisk.size() &&resultFromDisk.get(count3).getVariable().equals("instruction") ){
 				memory[i]= new Pair(resultFromDisk.get(count3).getVariable(),resultFromDisk.get(count3).getValue());
@@ -165,7 +166,7 @@ public class Interpreter {
 
 			
 		}
-		
+			printQueues(readyList, blocked);
 		
 		if(readyList.isEmpty() || count==3)
 			return;
@@ -891,13 +892,98 @@ public void implement(String input1 , String input2, String input3,  String inpu
 		break;
 
 	case "print":
-		System.out.print(input2);
+		if(curPID == (int) memory[0].getValue())
+		{
+			for( int i=22 ; i<25 ; i++)
+			{
+				if(memory[i]!=null)
+				{
+					if(memory[i].getVariable().equals(input2))
+					{
+						System.out.print("PRINTING : ");
+						System.out.println(memory[i].getValue());
+
+					}	
+				}
+
+			}
+		}
+		else
+		{
+			if(curPID == (int) memory[5].getValue())
+			{
+				for( int i=37 ; i<40 ; i++)
+				{
+					if(memory[i]!=null)
+					{
+						if(memory[i].getVariable().equals(input2))
+						{
+							System.out.print("PRINTING : ");
+							System.out.println(memory[i].getValue());
+
+						}	
+					}
+
+				}
+			}
+		}
+		//System.out.print(input2);
 		break;
 
 	case "writeFile":
 
-		String filePath ="./src/Processes/" + input2 + ".txt";
-		String dataToWrite = input3;
+		String filename = "";
+		String value2 = "";
+		
+		if(curPID == (int) memory[0].getValue())
+		{
+			for( int i=22 ; i<25 ; i++)
+			{
+				if(memory[i]!=null)
+				{
+					if(memory[i].getVariable().equals(input2))
+					{
+						filename = memory[i].getValue()+"";
+
+					}
+					if(memory[i].getVariable().equals(input3))
+					{
+						value2 = memory[i].getValue()+"";
+
+					}
+				}
+
+			}
+		}
+		else
+		{
+			if(curPID == (int) memory[5].getValue())
+			{
+				for( int i=37 ; i<40 ; i++)
+				{
+					if(memory[i]!=null)
+					{
+						if(memory[i].getVariable().equals(input2))
+						{
+							filename = memory[i].getValue()+"";
+
+						}
+						if(memory[i].getVariable().equals(input3))
+						{
+							value2 = memory[i].getValue()+"";
+
+						}
+					}
+
+				}
+			}
+		}
+		
+		
+		
+		
+		String filePath ="./src/Processes/" + filename + ".txt";
+		String dataToWrite =  value2;
 		try (PrintWriter out = new PrintWriter(new FileOutputStream(filePath))) {
 			out.println(dataToWrite);
 		} catch (FileNotFoundException e) {
@@ -970,7 +1056,7 @@ public void execute(int a1, String p1, int a2, String p2 ) throws IOException
 
 					if((int)memory[0].getValue()==curPID){
 						
-						System.out.println(curPID+" ins before  "+memory[pc].getValue());
+						System.out.println("PROCESS: " + curPID+" INSTRUCTION THAT WILL BE EXECUTED:  "+memory[pc].getValue());
 					 	printMemory();
 					implement(input1 , input2, input3 , input4, a1,  p1,  a2,  p2);
 					
@@ -1018,7 +1104,7 @@ public void execute(int a1, String p1, int a2, String p2 ) throws IOException
 			
 			
 			int pc=(int) memory[7].getValue();
-			for(int i= 0; i<timeSlice && pc<37; i++)
+			for(int i= 0; i<timeSlice && clk<clkIncremented&& pc<37; i++)
 			{
 				if(memory[pc]!= null)
 				{ //  System.out.println(memory[pc].getVariable()+ " " + memory[pc].getValue());
@@ -1040,7 +1126,7 @@ public void execute(int a1, String p1, int a2, String p2 ) throws IOException
 					}
 					if((int)memory[5].getValue()==curPID)
 					{
-						System.out.println(curPID+" ins before  "+memory[pc].getValue());
+						System.out.println("PROCESS: " + curPID+" INSTRUCTION THAT WILL BE EXECUTED:  "+memory[pc].getValue());
 					 	printMemory();
 						
 						implement(input1 , input2, input3 , input4, a1,  p1,  a2,  p2);
@@ -1090,7 +1176,25 @@ public void execute(int a1, String p1, int a2, String p2 ) throws IOException
 
 
 
+public void printQueues(Queue<Integer> readyList,
+		Queue<Integer> blocked) {
+	System.out.println("Queues:");
 
+	System.out.print("Ready Queue: ");
+	for (Integer pid : readyList) {
+		System.out.print(pid + " ");
+	}
+	System.out.println();
+
+
+	System.out.print("Blocked Queue: ");
+	for (Integer pid : blocked) {
+		System.out.print(pid + " ");
+	}
+	System.out.println();
+
+	System.out.println();
+}
 
 
 public  void loadintomemory(Process p, int a1, String p1, int a2, String p2) throws IOException

@@ -1,15 +1,15 @@
-id 3
-state Blocked
-pc 11
+id 1
+state Finished
+pc 17
 min 10
 max 24
-instruction semWait userInput
-instruction assign a input
-instruction semSignal userInput
-instruction semWait file
-instruction assign b readFile a
-instruction semSignal file
-instruction semWait userOutput
-instruction print b
-instruction semSignal userOutput
+instruction semWait userInput 
+instruction assign a 5 
+instruction assign b 6
+instruction semSignal userInput 
+instruction semWait userOutput 
+instruction printFromTo a b 
+instruction semSignal userOutput 
+a 5
+b 6
 
