@@ -881,8 +881,16 @@ public void execute(int a1, String p1, int a2, String p2 ) throws IOException
 					}
 
 					if((int)memory[0].getValue()==curPID){
-					
 					implement(input1 , input2, input3 , input4, a1,  p1,  a2,  p2);
+					boolean no=false;
+					if(input1.equals("assign")){
+						for(int j=22;j<25;j++){
+							if(memory[j]!=null && memory[j].getVariable().equals(input2)){
+								no=true;
+							}
+						}
+					}
+					if(!(input1.equals("assign"))|| no)
 					pc++;}
 					
 				}
@@ -930,13 +938,23 @@ public void execute(int a1, String p1, int a2, String p2 ) throws IOException
 						input4 = words[3];
 					}
 					if((int)memory[5].getValue()==curPID){
-					implement(input1 , input2, input3 , input4,  a1,  p1,  a2,  p2);
-					pc++;}
-					else
-						break;
+						implement(input1 , input2, input3 , input4, a1,  p1,  a2,  p2);
+						boolean no=false;
+						if(input1.equals("assign")){
+							for(int j=37;j<40;j++){
+								if(memory[j]!=null && memory[j].getVariable().equals(input2)){
+									no=true;
+								}
+							}
+						}
+						if(!(input1.equals("assign"))|| no)
+						pc++;}
+					
 				}
 				if((int)memory[5].getValue()==curPID)
 				memory[7]=new Pair ("pc",pc);
+				else
+					break;
 //				System.out.println("Memory[1] "+ memory[6].getValue()+ " Dandoona");
 				if(memory[6].getValue()== State.Blocked)
 				{
