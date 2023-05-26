@@ -23,14 +23,16 @@ public class Interpreter {
 	private int pid_file;
 	private int pid_read;
 	private int pid_output;
-	private int clk=0;
-	private static int count=0;
+	private  int clk=0;
+	private  int count=0;
 	private static int numOfProcesses=0;
-
+	private boolean stillRunning=false;
+    private boolean ENTERED1=false;
+    private boolean ENTERED2=false;
 	private int curPID;
 
 
-
+   
 	public Interpreter(int timeSlice){
 
 		this.timeSlice=timeSlice;
@@ -73,25 +75,25 @@ public class Interpreter {
 
 		for (int i=0; i<min; i++)
 		{
-			clk++;
+			this.clk++;
 		}
 
 		if (min==a1){
 
 			//this.readyList.add(new Process(p1).getPcb().getID());
-			loadintomemory(new Process(p1), a2,p2,a3,p3);
+			this.loadintomemory(new Process(p1), a2,p2,a3,p3);
 			//counter++;
 			//break;
 		}
 		if (min==a2){
 			//this.readyList.add(new Process(p2));
-			loadintomemory(new Process(p2),a1,p1,a3,p3);
+			this.loadintomemory(new Process(p2),a1,p1,a3,p3);
 			//counter++;
 			//break;
 		}
 		if (min==a3){
 			//this.readyList.add(new Process(p2));
-			loadintomemory(new Process(p3), a1,p1,a2,p2);
+			this.loadintomemory(new Process(p3), a1,p1,a2,p2);
 			//counter++;
 			//break;
 
@@ -102,7 +104,13 @@ public class Interpreter {
 
 	}
 
-
+    public int getClk(){
+    	return this.clk;
+    }
+    
+    public void setClk(){
+    	this.clk=this.getClk()+1;
+    }
 
 	public  void loadintomemory(Process p, int a1, String p1, int a2, String p2) throws IOException
 	{
@@ -123,6 +131,7 @@ public class Interpreter {
 			int j=0;
 			for (int i=10;i<22;i++){ //deh error bardo
 				if ( i<p.getInstructions().size() +10 && p.getInstructions().get(j)!=null   ){
+					System.out.println(p.getInstructions().get(j)+ "  process"+ " "+ p.getPcb().getID());
 					memory[i]=new Pair ("instruction",p.getInstructions().get(j));
 					j++;
 
@@ -151,6 +160,7 @@ public class Interpreter {
 			int j=0;
 			for (int i=25;i<37;i++){
 				if ( i<p.getInstructions().size()+25 && p.getInstructions().get(j)!=null ){
+					System.out.println(p.getInstructions().get(j)+ "  process"+ " "+ p.getPcb().getID() + " dakhal hena");
 					memory[i]=new Pair ("instruction",p.getInstructions().get(j));
 					j++;
 
@@ -165,8 +175,9 @@ public class Interpreter {
 		else 
 		{
 			clear();
+			System.out.println("HENA "+ p.getPcb().getID());
 			loadintomemory(p,a1,p1,a2,p2);
-
+           
 		}
 
 
@@ -219,9 +230,9 @@ public class Interpreter {
 				
 				
 			default:
-				System.out.println("alooo");
-				System.out.println(values[0]);
-			valuesOnDisk.add(new Pair(values[0],values[1]));	
+				    System.out.println("alooo");
+				    System.out.println(values[0]);
+			        valuesOnDisk.add(new Pair(values[0],values[1]));	
             // mesh mehandeleen case variables law 3amalna assign we7atena fel mem
 
 
@@ -266,13 +277,13 @@ public class Interpreter {
 	{
 		String filePath = "./src/Processes/disk.txt" ;
 		String dataToWrite = "";
-		if (memory[1].getValue()!=State.Running) 
+		if (memory[0]!=null &&(int)memory[0].getValue()==curPID) 
 		{
 			for (int i =0; i<5; i++)
-			{
+			{   if(memory[i]!=null){
 				dataToWrite+= memory[i].getVariable() + " ";
 				dataToWrite+= memory[i].getValue() +"\n";
-				memory[i]=null;
+				memory[i]=null;}
 			}
 			for (int i =10; i<25 ; i++)    //error
 			{
@@ -284,8 +295,8 @@ public class Interpreter {
 				}
 			}
 		}
-		else if (memory[6].getValue()!=State.Running)
-		{
+		else if ((int)memory[5].getValue()!=curPID)
+		{   System.out.println("Process" +"ppp"+ memory[5].getValue()+" mesh el mafrood tetme7y/ CLEAR()");
 			for (int i =5; i<10; i++)
 			{
 				dataToWrite+= memory[i].getVariable() + " ";
@@ -571,26 +582,29 @@ public class Interpreter {
 
 
 	public void execute(int a1, String p1, int a2, String p2 ) throws IOException
-	{
+	{   printMemory();
 		
 		if( (memory[0]!=null &&   curPID !=(int) memory[0].getValue()) &&  (memory[5]!=null &&curPID != (int) memory[5].getValue()))
 			swapMemDisk();
 
 		//change el state men ready le running 
 		// el sem signal w wait wel hbal da 
-		int x=clk+timeSlice;
+		int x=this.clk+timeSlice;
 		if(memory[0]!= null||memory[5]!= null)
 		{
 
-			if(curPID ==(int) memory[0].getValue())
+			if(memory[0]!=null &&curPID ==(int) memory[0].getValue())
 			{
 				int pc=(int) memory[2].getValue();
 				for(int i= 0; i<timeSlice && pc<22; i++)
 				{ 
 					if(memory[pc]!= null )
-					{ 
+						System.out.println(pc);
+					{   System.out.println(memory[pc].getValue());
 						String[] words = ((String) memory[pc].getValue()).split(" ");
+						System.out.println(words.length);
 						String input1= words[0];
+						
 						String input2= words[1];
 						String input3="";
 						String input4="";
@@ -642,7 +656,7 @@ public class Interpreter {
 			}
 			
 		}
-		scheduleProcesses(a1,p1,a2,p2);
+
 	}
 
      
@@ -706,10 +720,21 @@ public class Interpreter {
 
 
 	public void implement(int incrementedClk, String input1 , String input2, String input3,  String input4, int a1, String p1, int a2, String p2) throws IOException 
-	{ printMemory();
+	{ 
 		
-		if(clk>=incrementedClk)
+		if(this.getClk()==incrementedClk){
 		return;
+		}
+		if(this.getClk() == a1 )
+		{   System.out.println("EL SA3A"+ " " +this.clk);
+			loadintomemory(new Process(p1), a1, p1, a2, p2);
+		}
+		if(this.getClk() == a2 )
+			
+		{System.out.println("EL SA3A"+ " " +this.clk);
+			loadintomemory(new Process(p2), a1, p1, a2, p2);
+		
+		}
 	
 		Object value;
         switch(input1)
@@ -795,17 +820,10 @@ public class Interpreter {
 			break;
 
 		}
-		clk++;
+		++this.clk;
 		
-		if(clk == a1)
-		{
-			loadintomemory(new Process(p1), a1, p1, a2, p2);
-		}
-		if(clk == a2)
-		{
-			loadintomemory(new Process(p2), a1, p1, a2, p2);
-		}
-		return;
+		
+		
 	}
 
 
