@@ -926,7 +926,7 @@ public void execute(int a1, String p1, int a2, String p2 ) throws IOException
 		if(memory[0]!=null &&curPID ==(int) memory[0].getValue())
 		{
 			int pc=(int) memory[2].getValue();
-			for(int i= 0; i<timeSlice && pc<22; i++)
+			for(int i= 0; i<timeSlice && clk<clkIncremented&& pc<22; i++)
 			{ 
 				
 
