@@ -24,8 +24,8 @@ public class Interpreter {
 	private int pid_file;
 	private int pid_read;
 	private int pid_output;
-	private  int clk=0;
-	private  int count=0;
+	private int clk=0;
+	private int count=0;
 	private int curPID;
 	private int clkIncremented;
 	
@@ -52,7 +52,7 @@ public class Interpreter {
 		i.arrival(0, "src/Processes/Program_1.txt", 1, "src/Processes/Program_2.txt", 2, "src/Processes/Program_3.txt");
 		}
 
-	public void swapMemDisk(   ) throws IOException
+	public void swapMemDisk() throws IOException
 	{
 		
 		
@@ -63,7 +63,8 @@ public class Interpreter {
 			    memory[6].setValue(State.Running);
 			    return;}
 		Vector<Pair> resultFromDisk= new Vector<Pair>();
-		for(int i=0;i<getProcessOnDisk().size();i++){
+		for(int i=0;i<getProcessOnDisk().size();i++)
+		{
 			resultFromDisk.add(new Pair(getProcessOnDisk().get(i).getVariable(),getProcessOnDisk().get(i).getValue()));
 			
 			//System.out.println(i + " " + resultFromDisk.get(i).getVariable() + " " + resultFromDisk.get(i).getValue());
@@ -84,6 +85,7 @@ public class Interpreter {
 				memory[i]= new Pair(resultFromDisk.get(i).getVariable(),resultFromDisk.get(i).getValue());
 				count3++;
 				}
+			System.out.println("current process being swapped in from disk to memory: "+ memory[0].getValue());
 			for(int i=10;i<resultFromDisk.size()+5;i++)
 			{   if(count3<resultFromDisk.size() &&resultFromDisk.get(count3).getVariable().equals("instruction") ){
 				memory[i]= new Pair(resultFromDisk.get(count3).getVariable(),resultFromDisk.get(count3).getValue());
@@ -107,7 +109,7 @@ public class Interpreter {
 				memory[i]= new Pair(resultFromDisk.get(count2).getVariable(),resultFromDisk.get(count2).getValue());
 				count2++;
 				}
-
+			System.out.println("current process being swapped in from disk to memory: "+ memory[5].getValue());
 			for(int i=37;i<40;i++)
 			{  
 				if(count2<resultFromDisk.size() &&resultFromDisk.get(count2)!=null){
@@ -121,7 +123,8 @@ public class Interpreter {
 
 	}
 	
-	public void scheduleProcesses(int a1, String p1, int a2, String p2) throws IOException{
+	public void scheduleProcesses(int a1, String p1, int a2, String p2) throws IOException
+	{
 //		if(numOfProcesses == 1)
 //		{
 //			execute();
@@ -132,7 +135,7 @@ public class Interpreter {
 			for(int i=10;i<22;i++){
 				if(memory[i]!=null &&memory[i].getVariable().equals("instruction"))
 					lastInstructionAddress=i;}
-			if(lastInstructionAddress==(int)memory[2].getValue()){
+			if(lastInstructionAddress<(int)memory[2].getValue()){
 				count++;
 				//clearOnly(curPID);
 				memory[1].setValue(State.Finished);
@@ -143,7 +146,7 @@ public class Interpreter {
 			for(int i=25;i<37;i++){
 				if(memory[i]!=null &&memory[i].getVariable().equals("instruction"))
 					lastInstructionAddress=i;}
-			if(lastInstructionAddress==(int)memory[7].getValue()){
+			if(lastInstructionAddress<(int)memory[7].getValue()){
 				count++;
 				//clearOnly(curPID);
 				memory[6].setValue(State.Finished);
@@ -227,6 +230,34 @@ public class Interpreter {
 			e.printStackTrace();
 		}
 
+		
+		
+		
+		
+		
+		
+//		System.out.println("Queues:");
+//
+//	    System.out.print("Ready Queue: ");
+//	    for (Integer pid : readyList) {
+//	        System.out.print(pid + " ");
+//	    }
+//	    System.out.println();
+//
+//
+//
+//	    System.out.print("Blocked Queue: ");
+//	    for (Integer pid : blocked) {
+//	        System.out.print(pid + " ");
+//	    }
+//	    System.out.println();
+//
+//	    System.out.println();
+		
+		
+		
+		
+		
 		return content.toString();
 	}
 public void arrival (int a1 ,String p1, int a2 ,String p2 , int a3 , String p3) throws IOException{
@@ -617,7 +648,8 @@ public void implement(String input1 , String input2, String input3,  String inpu
 {  // System.out.println("CLK CYCLE" + " "+clk);
 	//printMemory();
 //	System.out.println("process RUNNING "+ curPID);
-	if(this.clk==this.clkIncremented){
+	if(this.clk==this.clkIncremented)
+	{
 	return;
 	}
 	++this.clk;
@@ -635,16 +667,69 @@ public void implement(String input1 , String input2, String input3,  String inpu
 
 	case "printFromTo":	
 
-		int y= Integer.parseInt(input3);
-		for (int x= Integer.parseInt(input2); x<y; x++)
+//		int y= Integer.parseInt(input3);
+//		for (int x= Integer.parseInt(input2); x<y; x++)
+//		{
+//			System.out.print(x);
+//		}
+		int a=0;
+		int b=0;
+		if(memory[0]!=null&& curPID==(int)memory[0].getValue())
 		{
-			System.out.print(x);
+			for(int i=22; i<25; i++)
+			{
+				if(memory[i]!=null)
+				{	
+				if(memory[i].getVariable().equals(input2))
+				{
+					a=(int)memory[i].getValue();
+				}	
+				if(memory[i].getVariable().equals(input3))
+				{
+					b=(int)memory[i].getValue();
+				}
+				}
+			}
 		}
+		else if(memory[5]!=null&& curPID==(int)memory[5].getValue())
+		{
+			for(int i=37; i<40; i++)
+			{
+				if(memory[i]!=null)
+				{	
+				if(memory[i].getVariable().equals(input2))
+				{
+					a=(int)memory[i].getValue();
+				}	
+				if(memory[i].getVariable().equals(input3))
+				{
+					b=(int)memory[i].getValue();
+				}
+				}
+			}
+		}
+		
+		
+		
+		for(int x=a; x<b; x++)
+		{
+			if(x==a)
+				System.out.println("Printing from "+x );
+			else if(x==b-1)
+				System.out.println( "to "+ b);
+			else 
+				System.out.println(x);
+		}
+		
+		
+		
+		
+		
 		break;
 
 	case "assign":
 
-		System.out.println(curPID+ " "+ input3);	
+//		System.out.println(curPID+ " "+ input3);	
 		if(input3.equals("input"))
 		{
 			
@@ -844,25 +929,13 @@ public void execute(int a1, String p1, int a2, String p2 ) throws IOException
 			for(int i= 0; i<timeSlice && pc<22; i++)
 			{ 
 				
-				
-//				
-//				if(this.getClk() == a1 )
-//				{   System.out.println("EL SA3A"+ " " +this.clk);
-//					loadintomemory(new Process(p1), a1, p1, a2, p2);
-//				}
-//				if(this.getClk() == a2 )
-//					
-//				{System.out.println("EL SA3A"+ " " +this.clk);
-//					loadintomemory(new Process(p2), a1, p1, a2, p2);
-//				
-//				}
+
 				
 				if(memory[pc]!= null )
 				{	
 //					System.out.println(pc);
 					
-				  	System.out.println(curPID+" ins "+memory[pc].getValue());
-				  	printMemory();
+				  	
 				  	
 				  	
 					String[] words = ((String) memory[pc].getValue()).split(" ");
@@ -881,17 +954,32 @@ public void execute(int a1, String p1, int a2, String p2 ) throws IOException
 					}
 
 					if((int)memory[0].getValue()==curPID){
+						
+						System.out.println(curPID+" ins before  "+memory[pc].getValue());
+					 	printMemory();
 					implement(input1 , input2, input3 , input4, a1,  p1,  a2,  p2);
+					
+					
+					
 					boolean no=false;
-					if(input1.equals("assign")){
-						for(int j=22;j<25;j++){
+					if(input1.equals("assign"))
+					{
+						for(int j=22;j<25;j++)
+						{
 							if(memory[j]!=null && memory[j].getVariable().equals(input2)){
 								no=true;
 							}
 						}
 					}
-					if(!(input1.equals("assign"))|| no)
-					pc++;}
+//					if(!(input1.equals("assign"))|| no)
+//						{
+						if(this.clk<this.clkIncremented||no)
+					
+						{
+							pc++;
+						}
+						
+//						}
 					
 				}
 				if((int)memory[0].getValue()==curPID)
@@ -908,6 +996,7 @@ public void execute(int a1, String p1, int a2, String p2 ) throws IOException
 			
 
 		}
+			}
 		else 
 		{   
 			
@@ -916,13 +1005,10 @@ public void execute(int a1, String p1, int a2, String p2 ) throws IOException
 			int pc=(int) memory[7].getValue();
 			for(int i= 0; i<timeSlice && pc<37; i++)
 			{
-				
-				
 				if(memory[pc]!= null)
 				{ //  System.out.println(memory[pc].getVariable()+ " " + memory[pc].getValue());
 					
-				 	System.out.println(curPID+" ins "+memory[pc].getValue());
-				 	printMemory();
+				 	
 				 	
 					String[] words = ((String) memory[pc].getValue()).split(" ");
 					String input1= words[0];
@@ -937,8 +1023,16 @@ public void execute(int a1, String p1, int a2, String p2 ) throws IOException
 					if (words.length >=4) {
 						input4 = words[3];
 					}
-					if((int)memory[5].getValue()==curPID){
+					if((int)memory[5].getValue()==curPID)
+					{
+						System.out.println(curPID+" ins before  "+memory[pc].getValue());
+					 	printMemory();
+						
 						implement(input1 , input2, input3 , input4, a1,  p1,  a2,  p2);
+						
+						
+						
+						
 						boolean no=false;
 						if(input1.equals("assign")){
 							for(int j=37;j<40;j++){
@@ -947,8 +1041,17 @@ public void execute(int a1, String p1, int a2, String p2 ) throws IOException
 								}
 							}
 						}
-						if(!(input1.equals("assign"))|| no)
-						pc++;}
+//						
+//						if(!(input1.equals("assign"))|| no)
+//						{
+						if(this.clk<this.clkIncremented||no)
+					
+						{
+							pc++;
+							
+						}
+						
+//						}
 					
 				}
 				if((int)memory[5].getValue()==curPID)
@@ -966,7 +1069,9 @@ public void execute(int a1, String p1, int a2, String p2 ) throws IOException
 			
 		}
 		
-	}}
+	}
+		}
+}
 
 
 
@@ -1092,12 +1197,18 @@ public void clear()
 			
 	}
 	else{
-		if(memory[0]!=null &&(int) memory[0].getValue()!=curPID){
+		if(memory[0]!=null &&(int) memory[0].getValue()!=curPID)
+		{
+			System.out.println("process being swapped out from memory to disk: " + memory[0].getValue());
 			for (int i =0; i<5; i++)
-			{   if(memory[i]!=null){
+			{
+				if(memory[i]!=null)
+			{
+				
 				dataToWrite+= memory[i].getVariable() + " ";
 				dataToWrite+= memory[i].getValue() +"\n";
-				memory[i]=null;}
+				memory[i]=null;
+				}
 			}
 			for (int i =10; i<25 ; i++)    //error
 			{
@@ -1111,12 +1222,17 @@ public void clear()
 		}
 		
 		else{
+			System.out.println("process being swapped out from memory to disk: " + memory[5].getValue());
 			for (int i =5; i<10; i++)
-			{if(memory[i]!=null){
+			{
+				if(memory[i]!=null)
+				{
+			
 				dataToWrite+= memory[i].getVariable() + " ";
 				dataToWrite+= memory[i].getValue() +"\n";
 				memory[i]=null;
-			}}
+				}
+			}
 			for (int i =25; i<40 ; i++)   //error
 			{
 				if(memory[i]!=null )
@@ -1129,6 +1245,7 @@ public void clear()
 		}
 		}
 
+	
 	try (PrintWriter out = new PrintWriter(new FileOutputStream(filePath, false ))) {
 		out.println(dataToWrite);
 	} catch (FileNotFoundException e) {
@@ -1137,7 +1254,41 @@ public void clear()
 }
 
 
+public void printQueues() {
+    System.out.println("Queues:");
 
+    System.out.print("Ready Queue: ");
+    for (Integer pid : readyList) {
+        System.out.print(pid + " ");
+    }
+    System.out.println();
+
+
+
+    System.out.print("Blocked Queue: ");
+    for (Integer pid : blocked) {
+        System.out.print(pid + " ");
+    }
+    System.out.println();
+
+    System.out.println();
+}
+public void printInstruction()
+{
+	int pc=0;
+	if(memory[0]!=null)
+	{
+	if(curPID==(int) memory[0].getValue())
+		pc=(int)memory[2].getValue();
+	}
+	else if(memory[5]!=null)
+	{
+		if(curPID==(int) memory[5].getValue())
+		pc=(int)memory[7].getValue();
+	}
+	
+		System.out.println("current Instruction: "+memory[pc].getValue());
+}
 
 
 
