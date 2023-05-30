@@ -1,7 +1,8 @@
 semWait userInput
-assign a input
+assign c input
 assign b input
 semSignal userInput
 semWait userOutput
-printFromTo a b
+printFromTo c b
+printFromTo c b
 semSignal userOutput

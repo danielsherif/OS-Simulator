@@ -1,15 +1,13 @@
-id 3
+id 2
 state Blocked
-pc 11
-min 10
-max 24
+pc 25
+min 25
+max 39
 instruction semWait userInput
 instruction assign a input
+instruction assign b input
 instruction semSignal userInput
 instruction semWait file
-instruction assign b readFile a
+instruction writeFile a b
 instruction semSignal file
-instruction semWait userOutput
-instruction print b
-instruction semSignal userOutput
 

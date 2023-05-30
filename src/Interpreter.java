@@ -48,7 +48,7 @@ public class Interpreter {
 	}
 	
 	public static void main(String[] args) throws IOException {
-		Interpreter i = new Interpreter(2);
+		Interpreter i = new Interpreter(1);
 		i.arrival(0, "src/Processes/Program_1.txt", 1, "src/Processes/Program_2.txt", 2, "src/Processes/Program_3.txt");
 		}
 
